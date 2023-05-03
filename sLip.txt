@@ -1,0 +1,166 @@
+a.Write a C++ program to interchange values of two integer numbers. (Use call by reference)
+
+#include <iostream>
+using namespace std;
+
+void swap(int& a, int& b) {
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int main() {
+    int x = 10, y = 20;
+    cout << "Before swapping: x = " << x << ", y = " << y << endl;
+    swap(x, y);
+    cout << "After swapping: x = " << x << ", y = " << y << endl;
+    return 0;
+}
+
+
+
+b.Write a C++ program to accept 'n' numbers C through Command Line Argument. Store all Even and Odd numbers in file "Even.txt" and "Odd.txt" respectively
+
+#include <iostream.h>
+#include <fstream.h>
+#include <iomanip.h>
+
+int main() {
+    ofstream out;
+    int n;
+    cout << "Enter the size of the array: ";
+    cin >> n;
+   int* a = new int[n];
+    cout << "Enter " << n << " integers : ";
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+    int* b = new int[n];
+    out.open("input.txt", ios::binary);
+    out.write((char*) &a, sizeof(a));
+    out.close();
+    ifstream in;
+    ofstream fp1, fp2;
+    in.open("input.txt", ios::binary);
+    in.read((char*) &b, sizeof(b));
+    fp1.open("even.txt");
+    fp2.open("odd.txt");
+    for ( i = 0; i < n; i++) {
+        if (b[i] % 2 == 0)
+            fp1 << b[i] << " ";
+        else
+            fp2 << b[i] << " ";
+    }
+    in.close();
+    fp1.close();
+    fp2.close();
+    char ch;
+    ifstream fp;
+    fp.open("even.txt");
+    cout << "The even file contents are: ";
+    while (fp.get(ch)) {
+        cout << ch;
+    }
+    fp.close();
+    fp.open("odd.txt");
+    cout << "\nThe odd file contents are: ";
+    while (fp.get(ch)) {
+        cout << ch;
+    }
+    fp.close();
+    return 0;
+}
+
+
+
+
+
+a. Create a Node.js Application that uses user defined module circle.js which exports functions area () and circumference () and display the details on console
+//circle.js
+const PI = 3.14;
+function area(radius) {
+  return PI * radius * radius;
+}
+function circumference(radius) {
+  return 2 * PI * radius;
+}
+module.exports = {
+  area,
+  circumference
+};
+
+//index.js
+const circle = require('./circle.js');
+const radius = 5;
+console.log(`Circle with radius ${radius}:`);
+console.log(`Area: ${circle.area(radius)}`);
+console.log(`Circumference: ${circle.circumference(radius)}`);
+
+
+b. Create a Node. Js Application for validating student registration form.
+
+//index.html
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Student Registration Form</title>
+  </head>
+  <body>
+    <h1>Student Registration Form</h1>
+    <form action="/register" method="post">
+      <label for="name">Name:</label>
+      <input type="text" name="name" id="name" required>
+      <br>
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required>
+      <br>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" required>
+      <br>
+      <label for="confirm-password">Confirm Password:</label>
+      <input type="password" name="confirm-password" id="confirm-password" required>
+      <br>
+      <button type="submit">Register</button>
+    </form>
+  </body>
+</html>
+
+
+
+//app.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+app.post('/register', (req, res) => {
+  const { name, email, password, 'confirm-password': confirmPassword } = req.body;
+  const errors = [];
+  if (!name) {
+    errors.push('Name is required');
+  }
+  if (!email) {
+    errors.push('Email is required');
+  }
+  if (!password) {
+    errors.push('Password is required');
+  }
+  if (password !== confirmPassword) {
+    errors.push('Passwords do not match');
+  }
+  if (errors.length > 0) {
+    res.send(`Errors: ${errors.join(', ')}`);
+  } else {
+    res.send('Registration successful!');
+  }
+});
+app.listen(3000, () => console.log('Server listening on port 3000'));
+
+
+//npm init
+
+//npm install express
+
+//http://localhost:3000/
