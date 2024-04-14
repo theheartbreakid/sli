@@ -1,0 +1,261 @@
+public class AlphabetDisplay {
+    public static void main(String[] args) throws InterruptedException {
+        for (char c = 'a'; c <= 'z'; c++) {
+            System.out.print(c + " ");
+            Thread.sleep(2000);
+        }
+    }
+}
+
+
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+class StudentAwtJdbc extends Frame implements ActionListener {
+    Label l1, l2, l3;
+    TextField t1, t2, t3;
+    Button b1;
+    public StudentAwtJdbc() {
+        setLayout(new FlowLayout());
+        setSize(800, 600);
+        setTitle("Search Student Record");
+        setVisible(true);
+        l1 = new Label("ENTER RNo:");
+        add(l1);
+        t1 = new TextField(10);
+        add(t1);
+        b1 = new Button("SEARCH");
+        add(b1);
+        b1.addActionListener(this);
+        l2 = new Label("Name:");
+        add(l2);
+        t2 = new TextField(20);
+        add(t2);
+        l3 = new Label("Percentage:");
+        add(l3);
+        t3 = new TextField(10);
+        add(t3);
+    }
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == b1) {
+            try {
+                int rno = Integer.parseInt(t1.getText());
+                Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+                Connection con = DriverManager.getConnection("jdbc:odbc:DSN");
+                PreparedStatement ps = con.prepareStatement("SELECT * FROM student WHERE RNo = ?");
+                ps.setInt(1, rno);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    t2.setText(rs.getString("SName"));
+                    t3.setText(String.valueOf(rs.getFloat("Per")));
+                } else {
+                    t2.setText("Student not found");
+                    t3.setText("");
+                }
+                rs.close();
+                ps.close();
+                con.close();
+            } catch (NumberFormatException | ClassNotFoundException | SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public static void main(String args[]) {
+        new StudentAwtJdbc();
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/border_shape">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World!"
+            android:textSize="40dp" >
+        </TextView>
+    </LinearLayout>
+</LinearLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Path: res/drawable/border_shape.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <item android:left="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <item android:left="8dp" android:top="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <item android:left="8dp" android:top="8dp" android:right="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFFFF" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+    <item android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF6200EE" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</layer-list>
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:enabled="true" />
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter location"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@id/btnSearch"
+        android:inputType="text" />
+    <Button
+        android:id="@+id/btnSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private static final float DEFAULT_ZOOM = 15f;
+    private MapView mapView;
+    private GoogleMap googleMap;
+    private EditText etSearch;
+    private Button btnSearch;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mapView = findViewById(R.id.map_view);
+        etSearch = findViewById(R.id.etSearch);
+        btnSearch = findViewById(R.id.btnSearch);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String locationName = etSearch.getText().toString();
+                if (!locationName.isEmpty()) {
+                    try {
+                        List<android.location.Address> addressList = new android.location.Geocoder(MainActivity.this).getFromLocationName(locationName, 1);
+                        if (addressList != null && !addressList.isEmpty()) {
+                            android.location.Address address = addressList.get(0);
+                            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                            googleMap.addMarker(new MarkerOptions().position(latLng).title(locationName));
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+    @Override
+    public void onMapReady(GoogleMap map) {
+        googleMap = map;
+        if (googleMap != null) {
+            googleMap.setMyLocationEnabled(true);
+            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+}

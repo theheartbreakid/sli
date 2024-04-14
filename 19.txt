@@ -1,0 +1,509 @@
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
+<html>
+<head>
+    <title>Greeting Page</title>
+</head>
+<body>
+    <form method="post" action="http://localhost:8083/TYBBACA/greet.jsp">
+        Enter your name: <input type="text" name="username">
+        <input type="submit" value="Submit">
+    </form>
+    <% 
+        String username = request.getParameter("username");
+        if(username != null && !username.isEmpty()) {
+            Date currentTime = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH");
+            int hour = Integer.parseInt(sdf.format(currentTime));
+            String greeting;
+            if (hour >= 0 && hour < 12) {
+                greeting = "Good morning";
+            } else if (hour >= 12 && hour < 18) {
+                greeting = "Good afternoon";
+            } else {
+                greeting = "Good evening";
+            }
+            out.println("<br><br>");
+            out.println("<h3>" + greeting + ", " + username + "!</h3>");
+        }
+    %>
+</body>
+</html>
+
+
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+public class DisplayFirstRecord extends Frame implements ActionListener {
+    Label l1, l2, l3;
+    TextField t1, t2, t3;
+    Button b1;
+    Connection con;
+    Statement stmt;
+    ResultSet rs;
+    public DisplayFirstRecord() {
+        setTitle("Display First Record");
+        setSize(400, 200);
+        setLayout(new FlowLayout());
+        l1 = new Label("RNo:");
+        add(l1);
+        t1 = new TextField(10);
+        add(t1);
+        l2 = new Label("SName:");
+        add(l2);
+        t2 = new TextField(20);
+        add(t2);
+        l3 = new Label("Percentage:");
+        add(l3);
+        t3 = new TextField(10);
+        add(t3);
+        b1 = new Button("Display First Record");
+        add(b1);
+        b1.addActionListener(this);
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            con = DriverManager.getConnection("jdbc:odbc:DSN");
+            stmt = con.createStatement();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setVisible(true);
+    }
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getSource() == b1) {
+            try {
+                rs = stmt.executeQuery("SELECT * FROM student");
+                if (rs.next()) {
+                    t1.setText(rs.getString(1));
+                    t2.setText(rs.getString(2));
+                    t3.setText(rs.getString(3));
+                } else {
+                    System.out.println("No records found!");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] args) {
+        new DisplayFirstRecord();
+    }
+}
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Array 1: "
+        android:id="@+id/tv1">
+    </TextView>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:id="@+id/ed1"
+        android:layout_toRightOf="@id/tv1"
+        android:layout_marginLeft="20sp">
+    </EditText>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Array 2: "
+        android:layout_marginTop="30sp"
+        android:layout_below="@id/tv1"
+        android:id="@+id/tv2">
+    </TextView>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:id="@+id/ed2"
+        android:layout_toRightOf="@id/tv2"
+        android:layout_below="@id/ed1"
+        android:layout_marginLeft="20sp">
+    </EditText>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:text="Array 3: "
+        android:layout_marginTop="30sp"
+        android:layout_below="@id/tv2"
+        android:id="@+id/tv3">
+    </TextView>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:id="@+id/ed3"
+        android:layout_toRightOf="@id/tv3"
+        android:layout_below="@id/ed2"
+        android:layout_marginLeft="20sp">
+    </EditText>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:layout_marginTop="30sp"
+        android:layout_below="@id/ed3"
+        android:text="Show"
+        android:id="@+id/btn1">
+    </Button>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    EditText ed1, ed2, ed3;
+    Button btn1;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ed1 = findViewById(R.id.ed1);
+        ed2 = findViewById(R.id.ed2);
+        ed3 = findViewById(R.id.ed3);
+        btn1 = findViewById(R.id.btn1);
+        btn1.setOnClickListener(view -> {
+            String val1 = ed1.getText().toString();
+            String val2 = ed2.getText().toString();
+            String ans = val1 + val2;
+            ed3.setText(ans);
+        });
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/solution_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/result_tv"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:textSize="32dp" />
+    <TextView
+        android:id="@+id/result_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="64dp"
+        android:textAlignment="textEnd"
+        android:textColor="@color/black"
+        android:layout_above="@id/buttons_layout"
+        android:layout_margin="16dp" />
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:background="#F1F1F1"
+        android:paddingVertical="16dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/button_ac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AC" />
+            <Button
+                android:id="@+id/button_plus_div"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+/" />
+            <Button
+                android:id="@+id/button_divide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/" />
+            <Button
+                android:id="@+id/button_multiply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/button_7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7" />
+            <Button
+                android:id="@+id/button_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8" />
+            <Button
+                android:id="@+id/button_9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="9" />
+            <Button
+                android:id="@+id/button_minus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/button_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4" />
+            <Button
+                android:id="@+id/button_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5" />
+            <Button
+                android:id="@+id/button_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6" />
+            <Button
+                android:id="@+id/button_plus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/button_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1" />
+            <Button
+                android:id="@+id/button_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2" />
+            <Button
+                android:id="@+id/button_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3" />
+            <Button
+                android:id="@+id/button_mod"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="%" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/button_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0" />
+            <Button
+                android:id="@+id/button_dot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="."
+                android:onClick="onDotButtonClick" />
+            <Button
+                android:id="@+id/button_equals"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="="
+                android:onClick="onEqualsButtonClick" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+import com.google.android.material.button.MaterialButton;
+import java.util.Stack;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+    TextView resultTv, solutionTv;
+    String dataToCalculate = "";
+    boolean isResultDisplayed = false;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        resultTv = findViewById(R.id.result_tv);
+        solutionTv = findViewById(R.id.solution_tv);
+        findViewById(R.id.button_divide).setOnClickListener(this);
+        findViewById(R.id.button_multiply).setOnClickListener(this);
+        findViewById(R.id.button_plus).setOnClickListener(this);
+        findViewById(R.id.button_minus).setOnClickListener(this);
+        findViewById(R.id.button_equals).setOnClickListener(this);
+        findViewById(R.id.button_0).setOnClickListener(this);
+        findViewById(R.id.button_1).setOnClickListener(this);
+        findViewById(R.id.button_2).setOnClickListener(this);
+        findViewById(R.id.button_3).setOnClickListener(this);
+        findViewById(R.id.button_4).setOnClickListener(this);
+        findViewById(R.id.button_5).setOnClickListener(this);
+        findViewById(R.id.button_6).setOnClickListener(this);
+        findViewById(R.id.button_7).setOnClickListener(this);
+        findViewById(R.id.button_8).setOnClickListener(this);
+        findViewById(R.id.button_9).setOnClickListener(this);
+        findViewById(R.id.button_ac).setOnClickListener(this);
+        findViewById(R.id.button_dot).setOnClickListener(this);
+        findViewById(R.id.button_mod).setOnClickListener(this);
+        findViewById(R.id.button_plus_div).setOnClickListener(this);
+    }
+    @Override
+    public void onClick(View view) {
+        MaterialButton button =(MaterialButton) view;
+        String buttonText = button.getText().toString();
+        if(buttonText.equals("AC")){
+            dataToCalculate = "";
+            solutionTv.setText("");
+            resultTv.setText("0");
+            isResultDisplayed = false;
+            return;
+        }
+        if(buttonText.equals("=")){
+            if (!isResultDisplayed && !dataToCalculate.isEmpty()) {
+                evaluateExpression();
+            }
+            return;
+        }
+        if(buttonText.equals("C")){
+            if (!dataToCalculate.isEmpty()) {
+                dataToCalculate = dataToCalculate.substring(0, dataToCalculate.length()-1);
+                solutionTv.setText(dataToCalculate);
+            }
+        } else if (buttonText.equals("+/-")) {
+            if (!dataToCalculate.isEmpty()) {
+                double num = Double.parseDouble(dataToCalculate);
+                num *= -1;
+                dataToCalculate = String.valueOf(num);
+                solutionTv.setText(dataToCalculate);
+            }
+        } else {
+            if (isResultDisplayed) {
+                dataToCalculate = "";
+                resultTv.setText("");
+                isResultDisplayed = false;
+            }
+            dataToCalculate += buttonText;
+            solutionTv.setText(dataToCalculate);
+        }
+    }
+    private void evaluateExpression() {
+        try {
+            double result = evaluate(dataToCalculate);
+            resultTv.setText(String.valueOf(result));
+            isResultDisplayed = true;
+        } catch (Exception e) {
+            resultTv.setText("Err");
+            isResultDisplayed = true;
+        }
+    }
+    private double evaluate(String expression) {
+        String[] tokens = expression.split("(?<=[-+*/%()])|(?=[-+*/%()])");
+        Stack<Double> values = new Stack<>();
+        Stack<Character> operators = new Stack<>();
+
+        for (String token : tokens) {
+            if (token.trim().isEmpty()) {
+                continue;
+            }
+            char firstChar = token.charAt(0);
+            if (Character.isDigit(firstChar) || firstChar == '.') {
+                values.push(Double.parseDouble(token));
+            } else if (token.equals("(")) {
+                operators.push('(');
+            } else if (token.equals(")")) {
+                while (!operators.isEmpty() && operators.peek() != '(') {
+                    applyOperator(values, operators);
+                }
+                operators.pop();
+            } else {
+                while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(firstChar)) {
+                    applyOperator(values, operators);
+                }
+                operators.push(firstChar);
+            }
+        }
+        while (!operators.isEmpty()) {
+            applyOperator(values, operators);
+        }
+        if (values.size() != 1) {
+            throw new IllegalArgumentException("Invalid expression: Too many operands");
+        }
+        return values.pop();
+    }
+    private void applyOperator(Stack<Double> values, Stack<Character> operators) {
+        char operator = operators.pop();
+        double num2 = values.pop();
+        double num1 = values.pop();
+        double result = 0;
+        switch (operator) {
+            case '+':
+                result = num1 + num2;
+                break;
+            case '-':
+                result = num1 - num2;
+                break;
+            case '*':
+                result = num1 * num2;
+                break;
+            case '/':
+                result = num1 / num2;
+                break;
+            case '%':
+                double num3 = (num1 / 100.0); // Calculate percentage
+                result = num3 * num2;
+                break;
+            default:
+                break;
+        }
+        values.push(result);
+    }
+    private int precedence(char operator) {
+        switch (operator) {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            default:
+                return 0;
+        }
+    }
+}

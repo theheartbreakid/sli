@@ -1,0 +1,263 @@
+import java.sql.*;
+public class EmployeeNamesWithA {
+    public static void main(String[] args) {
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            conn = DriverManager.getConnection("jdbc:odbc:your_DSN");
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM employees WHERE name LIKE 'A%'");
+            while (rs.next()) {
+                System.out.println(rs.getString("name"));
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (stmt != null) stmt.close(); } catch (SQLException e) { e.printStackTrace(); }
+            try { if (conn != null) conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+        }
+    }
+}
+
+
+import java.applet.*;
+import java.awt.*;
+import java.util.*;
+public class DigitalWatch extends Applet implements Runnable {
+    private Thread thread;
+    private boolean running;
+    public void init() {
+        setSize(300, 100);
+        setBackground(Color.white);
+    }
+    public void start() {
+        running = true;
+        thread = new Thread(this);
+        thread.start();
+    }
+    public void stop() {
+        running = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    public void run() {
+        while (running) {
+            repaint();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void paint(Graphics g) {
+        Calendar cal = Calendar.getInstance();
+        String hour = pad(cal.get(Calendar.HOUR_OF_DAY));
+        String minute = pad(cal.get(Calendar.MINUTE));
+        String second = pad(cal.get(Calendar.SECOND));
+        g.setColor(Color.black);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString(hour + ":" + minute + ":" + second, 100, 50);
+    }
+    private String pad(int time) {
+        return (time < 10) ? "0" + time : Integer.toString(time);
+    }
+}
+
+
+
+<!-- activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter phone number"
+        android:inputType="phone" />
+    <Button
+        android:id="@+id/btnCall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPhoneNumber"
+        android:text="Call" />
+</RelativeLayout>
+package com.mohsin.myapplication;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+public class MainActivity extends AppCompatActivity {
+    private static final int REQUEST_CALL_PHONE = 1;
+    private EditText editTextPhoneNumber;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        Button btnCall = findViewById(R.id.btnCall);
+        btnCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_CALL_PHONE);
+                } else {
+                    makePhoneCall();
+                }
+            }
+        });
+    }
+    private void makePhoneCall() {
+        String phoneNumber = editTextPhoneNumber.getText().toString();
+        if (phoneNumber.trim().length() > 0) {
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + phoneNumber));
+            try {
+                startActivity(intent);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "Please enter a phone number", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CALL_PHONE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                makePhoneCall();
+            } else {
+                Toast.makeText(this, "Call permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Custom Alert Dialog"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="30dp" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click me to show custom alert"
+        android:id="@+id/button"
+        android:layout_marginTop="62dp"
+        android:layout_below="@+id/textView1"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
+package com.mohsin.myapplication;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    Button closeButton;
+    AlertDialog.Builder builder;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        closeButton = (Button) findViewById(R.id.button);
+        builder = new AlertDialog.Builder(this);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                builder.setCancelable(false)
+                        .setPositiveButton("Ganesh", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                Toast.makeText(getApplicationContext(),"Hello Ganesh",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Rakesh", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                Toast.makeText(getApplicationContext(),"Hello Rakesh",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNeutralButton("Ramesh", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                Toast.makeText(getApplicationContext(),"Hello Ramesh",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.setTitle("My Custom Alert");
+                alert.show();
+            }
+        });
+    }
+}
+custom_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"
+        android:background="@android:color/background_dark"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_b1"
+            android:layout_margin="10dp"
+            android:text="Ganesh" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_b2"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:text="Rakesh" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_b3"
+            android:layout_margin="10dp"
+            android:text="Ramesh" />
+    </LinearLayout>
+</RelativeLayout>

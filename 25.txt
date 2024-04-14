@@ -1,0 +1,343 @@
+import java.io.*;
+import java.net.*;
+public class FactorServer {
+    public static void main(String[] args) {
+        final int PORT = 12345;
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
+            System.out.println("Server started. Waiting for client...");
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket);
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                int number = Integer.parseInt(in.readLine());
+                System.out.println("Received number from client: " + number);
+                out.println("Factors of " + number + ":");
+                for (int i = 1; i <= number; i++) {
+                    if (number % i == 0) {
+                        out.println(i);
+                    }
+                }
+                clientSocket.close();
+                System.out.println("Connection closed.\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+import java.io.*;
+import java.net.*;
+public class FactorClient {
+    public static void main(String[] args) {
+        final String SERVER_IP = "localhost";
+        final int SERVER_PORT = 12345;
+        try {
+            Socket socket = new Socket(SERVER_IP, SERVER_PORT);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("Enter a number: ");
+            int number = Integer.parseInt(reader.readLine());
+            out.println(number);
+            System.out.println("Factors of " + number + ":");
+            String factor;
+            while ((factor = in.readLine()) != null) {
+                System.out.println(factor);
+            }
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+public class DDLQueryApp extends JFrame {
+    private JTextField queryField;
+    private JButton createButton, alterButton, dropButton;
+    public DDLQueryApp() {
+        setTitle("DDL Query Application");
+        setSize(400, 150);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        queryField = new JTextField(30);
+        createButton = new JButton("Create Table");
+        alterButton = new JButton("Alter Table");
+        dropButton = new JButton("Drop Table");
+        createButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                executeQuery("CREATE TABLE " + queryField.getText());
+            }
+        });
+        alterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                executeQuery("ALTER TABLE " + queryField.getText());
+            }
+        });
+        dropButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                executeQuery("DROP TABLE " + queryField.getText());
+            }
+        });
+        setLayout(new BorderLayout());
+        JPanel topPanel = new JPanel();
+        topPanel.add(new JLabel("Type your DDL query here:"));
+        topPanel.add(queryField);
+        add(topPanel, BorderLayout.NORTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(createButton);
+        buttonPanel.add(alterButton);
+        buttonPanel.add(dropButton);
+        add(buttonPanel, BorderLayout.CENTER);
+    }
+    private void executeQuery(String query) {
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            Connection conn = DriverManager.getConnection("jdbc:odbc:DataSourceName");
+            Statement stmt = conn.createStatement();
+            stmt.executeUpdate(query);
+            JOptionPane.showMessageDialog(this, "Query executed successfully.");
+            stmt.close();
+            conn.close();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error executing query: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                DDLQueryApp app = new DDLQueryApp();
+                app.setVisible(true);
+            }
+        });
+    }
+}
+
+CREATE TABLE Employee (
+    EmpID AUTOINCREMENT PRIMARY KEY,
+    EmpName TEXT,
+    Salary DOUBLE,
+    Department TEXT
+);
+
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50),
+    Salary FLOAT,
+    Department VARCHAR(50)
+);
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
+    <TextView
+        android:id="@+id/tvRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rating: 0"
+        android:textSize="18sp"
+        android:layout_below="@id/ratingBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.widget.RatingBar;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private RatingBar ratingBar;
+    private TextView tvRating;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ratingBar = findViewById(R.id.ratingBar);
+        tvRating = findViewById(R.id.tvRating);
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                tvRating.setText("Rating: " + rating);
+                Toast.makeText(MainActivity.this, "Rating: " + rating, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/etEno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Employee Number"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etEname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Employee Name"
+        android:layout_below="@id/etEno"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etDesignation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Designation"
+        android:layout_below="@id/etEname"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etSalary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Salary"
+        android:inputType="numberDecimal"
+        android:layout_below="@id/etDesignation"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <Button
+        android:id="@+id/btnAddEmployee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Employee"
+        android:layout_below="@id/etSalary"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/tvEmployeeDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="16sp"
+        android:layout_below="@id/btnAddEmployee"
+        android:layout_marginTop="20dp"
+        android:padding="16dp" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private SQLiteDatabase database;
+    private EditText etEno, etEname, etDesignation, etSalary;
+    private Button btnAddEmployee;
+    private TextView tvEmployeeDetails;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        database = openOrCreateDatabase("EmployeeDatabase", MODE_PRIVATE, null);
+        createEmployeeTable();
+        etEno = findViewById(R.id.etEno);
+        etEname = findViewById(R.id.etEname);
+        etDesignation = findViewById(R.id.etDesignation);
+        etSalary = findViewById(R.id.etSalary);
+        btnAddEmployee = findViewById(R.id.btnAddEmployee);
+        tvEmployeeDetails = findViewById(R.id.tvEmployeeDetails);
+        btnAddEmployee.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addEmployeeDetails();
+            }
+        });
+        displayAllEmployees();
+    }
+    private void createEmployeeTable() {
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS Employee (" +
+                "Eno INTEGER PRIMARY KEY," +
+                "Ename TEXT," +
+                "Designation TEXT," +
+                "Salary REAL" +
+                ")";
+        try {
+            database.execSQL(createTableQuery);
+            Toast.makeText(this, "Employee table created successfully.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error creating Employee table.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void addEmployeeDetails() {
+        String eno = etEno.getText().toString().trim();
+        String ename = etEname.getText().toString().trim();
+        String designation = etDesignation.getText().toString().trim();
+        String salaryStr = etSalary.getText().toString().trim();
+        if (eno.isEmpty() || ename.isEmpty() || designation.isEmpty() || salaryStr.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        double salary = Double.parseDouble(salaryStr);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("Eno", Integer.parseInt(eno));
+        contentValues.put("Ename", ename);
+        contentValues.put("Designation", designation);
+        contentValues.put("Salary", salary);
+        long result = database.insert("Employee", null, contentValues);
+        if (result != -1) {
+            Toast.makeText(this, "Employee information added successfully.", Toast.LENGTH_SHORT).show();
+            displayAllEmployees(); // Refresh employee details after insertion
+        } else {
+            Toast.makeText(this, "Error adding employee information.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void displayAllEmployees() {
+        StringBuilder employeeDetails = new StringBuilder();
+        Cursor cursor = database.rawQuery("SELECT * FROM Employee", null);
+        if (cursor.moveToFirst()) {
+            do {
+                int eno = cursor.getInt(cursor.getColumnIndex("Eno"));
+                String ename = cursor.getString(cursor.getColumnIndex("Ename"));
+                String designation = cursor.getString(cursor.getColumnIndex("Designation"));
+                double salary = cursor.getDouble(cursor.getColumnIndex("Salary"));
+                String record = "Eno: " + eno + ", Ename: " + ename + ", Designation: " + designation + ", Salary: " + salary;
+                employeeDetails.append(record).append("\n");
+            } while (cursor.moveToNext());
+            tvEmployeeDetails.setText(employeeDetails.toString());
+        } else {
+            tvEmployeeDetails.setText("No records found.");
+        }
+        cursor.close();
+    }
+}

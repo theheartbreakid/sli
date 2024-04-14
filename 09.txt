@@ -1,0 +1,370 @@
+import java.util.*;
+import java.sql.*;
+public class InsertPreparedStatement {
+    public static void main(String args[]) throws Exception {
+        Connection con = null;
+        PreparedStatement ps = null;
+        String query;
+        int a;
+        String b;
+        float c;
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please Enter ENO:");
+        a = sc.nextInt();
+        System.out.println("Please Enter ENAME:");
+        b = sc.next();
+        System.out.println("Please Enter SAL:");
+        c = sc.nextFloat();
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            con = DriverManager.getConnection("jdbc:odbc:your_DSN", "", "");
+            query = "INSERT INTO emp VALUES (?, ?, ?)";
+            ps = con.prepareStatement(query);
+            ps.setInt(1, a);
+            ps.setString(2, b);
+            ps.setFloat(3, c);
+            int n = ps.executeUpdate();
+            if (n == 1)
+                System.out.println("RECORD INSERTED SUCCESSFULLY");
+            else
+                System.out.println("RECORD NOT INSERTED");
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null)
+                    ps.close();
+                if (con != null)
+                    con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+
+Page1.html
+<form method='post' action="http://localhost:8083/TYBBACA/page1.jsp">
+<h3>Page 1</h3>
+<h4>Select Your Product:</h4>
+<input type='checkbox' name='prod' value=10>Pencil<br>
+<input type='checkbox' name='prod' value=30>Pen<br>
+<input type='checkbox' name='prod' value=5>Eraser<br>
+<input type='checkbox' name='prod' value=8>Scale<br>
+<input type='checkbox' name='prod' value=45>Note Book<br>
+<input type='submit'><input type='reset'>
+</form> 
+
+page1.jsp
+<%
+String s[] = request.getParameterValues("prod");
+int tot=0;
+for(int i=0;i<s.length;i++){
+tot+=Integer.parseInt(s[i]);
+}
+session.setAttribute("tot1", tot);
+response.sendRedirect("Page2.html");
+%>
+
+Page2.html
+<form method='post' action="http://localhost:8083/TYBBACA/page2.jsp">
+<h3>Page 2</h3>
+<h4>Select Your Product:</h4>
+<input type='checkbox' name='prod' value=1300>Jeans<br>
+<input type='checkbox' name='prod' value=500>Shirt<br>
+<input type='checkbox' name='prod' value=2500>Saree<br>
+<input type='checkbox' name='prod' value=750>Trouser<br>
+<input type='checkbox' name='prod' value=400>T-Shirt<br>
+<input type='submit'><input type='reset'>
+</form>
+
+page2.jsp
+<%
+String s[] = request.getParameterValues("prod");
+int tot=0;
+for(int i=0;i<s.length;i++){
+tot+=Integer.parseInt(s[i]);
+}
+int tot1 = Integer.parseInt(session.getAttribute("tot1").toString());
+%>
+<table border=1>
+<tr><td><b>Page 1:</b></td><td>Rs.<%=tot1%>/-</td></tr>
+<tr><td><b>Page 2:</b></td><td>Rs.<%=tot%>/-</td></tr>
+<tr><td><b>Grand Total:</b></td><td>Rs.<%=tot1+tot%>/-</td></tr>
+</table>
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TableRow>
+        <TextView
+            android:id="@+id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="First Name:"
+            android:textSize="25sp" />
+        <EditText
+            android:id="@+id/f_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:id="@+id/tv2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Last Name:"
+            android:textSize="25sp" />
+        <EditText
+            android:id="@+id/l_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:id="@+id/tv3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Address:"
+            android:textSize="25sp" />
+        <EditText
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:id="@+id/tv4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Phone Number:"
+            android:textSize="25sp" />
+        <EditText
+            android:id="@+id/ph_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <TextView
+            android:id="@+id/tv5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email:"
+            android:textSize="25sp" />
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <RadioButton
+            android:id="@+id/male"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Male"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <RadioButton
+            android:id="@+id/female"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Female"
+            android:textSize="25sp" />
+    </TableRow>
+    <TableRow>
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Submit" />
+        <Button
+            android:id="@+id/btn_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear" />
+    </TableRow>
+</TableLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Toast;
+public class MainActivity extends AppCompatActivity {
+    private EditText f_name, l_name, address, ph_no, email;
+    private RadioButton male, female;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        f_name = findViewById(R.id.f_name);
+        l_name = findViewById(R.id.l_name);
+        address = findViewById(R.id.address);
+        ph_no = findViewById(R.id.ph_no);
+        email = findViewById(R.id.email);
+        male = findViewById(R.id.male);
+        female = findViewById(R.id.female);
+        Button submit = findViewById(R.id.btn_submit);
+        Button clear = findViewById(R.id.btn_clear);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String firstName = f_name.getText().toString();
+                String lastName = l_name.getText().toString();
+                String userAddress = address.getText().toString();
+                String phoneNumber = ph_no.getText().toString();
+                String emailAddress = email.getText().toString();
+                String gender = "";
+                if (male.isChecked()) {
+                    gender = male.getText().toString();
+                } else if (female.isChecked()) {
+                    gender = female.getText().toString();
+                }
+                showToast("First Name: " + firstName);
+                showToast("Last Name: " + lastName);
+                showToast("Address: " + userAddress);
+                showToast("Phone Number: " + phoneNumber);
+                showToast("Email: " + emailAddress);
+                if (!gender.isEmpty()) {
+                    showToast("Gender: " + gender);
+                } else {
+                    showToast("Please select a gender.");
+                }
+            }
+        });
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                clearFields();
+            }
+        });
+    }
+    private void showToast(String message) {
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+    }
+    private void clearFields() {
+        f_name.getText().clear();
+        l_name.getText().clear();
+        address.getText().clear();
+        ph_no.getText().clear();
+        email.getText().clear();
+        male.setChecked(false);
+        female.setChecked(false);
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/editTextPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone" />
+    <EditText
+        android:id="@+id/editTextMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextPhoneNumber"
+        android:hint="Message" />
+    <Button
+        android:id="@+id/buttonSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMessage"
+        android:layout_centerHorizontal="true"
+        android:text="Send" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.Manifest;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+public class MainActivity extends AppCompatActivity {
+    private static final int PERMISSION_REQUEST_CODE = 123;
+    private EditText editTextPhoneNumber, editTextMessage;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        editTextPhoneNumber = findViewById(R.id.editTextPhoneNumber);
+        editTextMessage = findViewById(R.id.editTextMessage);
+        Button buttonSend = findViewById(R.id.buttonSend);
+        buttonSend.setOnClickListener(view -> {
+            String phoneNumber = editTextPhoneNumber.getText().toString();
+            String message = editTextMessage.getText().toString();
+            sendSMS(phoneNumber, message);
+        });
+        requestPermissions();
+    }
+    private void requestPermissions() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, PERMISSION_REQUEST_CODE);
+        }
+    }
+    private void sendSMS(String phoneNumber, String message) {
+        SmsManager smsManager = SmsManager.getDefault();
+        PendingIntent sentPendingIntent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
+        smsManager.sendTextMessage(phoneNumber, null, message, sentPendingIntent, null);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(sentReceiver, new IntentFilter("SMS_SENT"));
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(sentReceiver);
+    }
+    private final BroadcastReceiver sentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (getResultCode()) {
+                case RESULT_OK:
+                    Toast.makeText(context, "SMS sent successfully", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                    Toast.makeText(context, "SMS sending failed", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    Toast.makeText(context, "No service", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_NULL_PDU:
+                    Toast.makeText(context, "Null PDU", Toast.LENGTH_SHORT).show();
+                    break;
+                case SmsManager.RESULT_ERROR_RADIO_OFF:
+                    Toast.makeText(context, "Radio off", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+}

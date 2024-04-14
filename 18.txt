@@ -1,0 +1,333 @@
+import java.util.Scanner;
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter a number: ");
+        int number = scanner.nextInt();
+        scanner.close();
+        long factorial = 1;
+        for (int i = 1; i <= number; i++) {
+            factorial *= i;
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Factorial of " + i +" is: " + factorial);
+        }
+    }
+}
+
+
+MyServer.java
+import java.awt.*;
+import java.awt.event.*;
+import java.net.*;
+import java.io.*;
+class MyServer extends Frame implements ActionListener {
+    static TextField t1 = new TextField(20);
+    static Button b1 = new Button("Send");
+    static TextArea ta = new TextArea(5, 20);
+    static DataOutputStream dos;
+    static DataInputStream dis;
+    static ServerSocket st;
+    static Socket s;
+    static String r;
+    MyServer() {
+        setLayout(new FlowLayout());
+        add(t1);
+        add(b1);
+        add(ta);
+        b1.addActionListener(this);
+        setVisible(true);
+        setSize(300, 300);
+    }
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        if (cmd.equalsIgnoreCase("send")) {
+            try {
+                r = t1.getText();
+                dos.writeUTF(r);
+            } catch (Exception p) {
+                p.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] d) throws IOException {
+        new MyServer();
+        st = new ServerSocket(1281);
+        s = st.accept();
+        dos = new DataOutputStream(s.getOutputStream());
+        dis = new DataInputStream(s.getInputStream());
+        while (true) {
+            try {
+                r = dis.readUTF();
+                ta.append("client:" + r + "\n");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+}
+
+MyClient.java
+import java.awt.*;
+import java.awt.event.*;
+import java.net.*;
+import java.io.*;
+class MyClient extends Frame implements ActionListener {
+    static TextField t1 = new TextField(20);
+    static Button b1 = new Button("Send");
+    static TextArea ta = new TextArea(5, 20);
+    static DataOutputStream dos;
+    static DataInputStream dis;
+    static Socket s;
+    static String r;
+    MyClient() {
+        setLayout(new FlowLayout());
+        add(t1);
+        add(b1);
+        add(ta);
+        b1.addActionListener(this);
+        setVisible(true);
+        setSize(300, 300);
+    }
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == b1) {
+            try {
+                r = t1.getText();
+                dos.writeUTF(r);
+            } catch (Exception p) {
+                p.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] d) throws IOException {
+        new MyClient();
+        s = new Socket("localhost", 1281);
+        dos = new DataOutputStream(s.getOutputStream());
+        dis = new DataInputStream(s.getInputStream());
+        while (true) {
+            try {
+                r = dis.readUTF();
+                ta.append("Server:" + r + "\n");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/editTextNumber1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter number 1"
+        android:inputType="number"
+        android:layout_margin="16dp"/>
+    <EditText
+        android:id="@+id/editTextNumber2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextNumber1"
+        android:hint="Enter number 2"
+        android:inputType="number"
+        android:layout_margin="16dp"/>
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextNumber2"
+        android:layout_centerHorizontal="true"
+        android:text="Submit"
+        android:layout_marginTop="16dp"/>
+    <TextView
+        android:id="@+id/textViewResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonSubmit"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextNumber1;
+    private EditText editTextNumber2;
+    private TextView textViewResult;
+    private Button buttonSubmit;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        editTextNumber1 = findViewById(R.id.editTextNumber1);
+        editTextNumber2 = findViewById(R.id.editTextNumber2);
+        textViewResult = findViewById(R.id.textViewResult);
+        buttonSubmit = findViewById(R.id.buttonSubmit);
+        buttonSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int number1 = Integer.parseInt(editTextNumber1.getText().toString());
+                int number2 = Integer.parseInt(editTextNumber2.getText().toString());
+
+                if (number1 > 10 && number2 > 10) {
+                    editTextNumber1.setError("Both numbers should not be greater than 10");
+                    editTextNumber2.setError("Both numbers should not be greater than 10");
+                    textViewResult.setText("");
+                } else {
+                    textViewResult.setText("Number 1: " + number1 + "\nNumber 2: " + number2);
+                }
+            }
+        });
+    }
+}
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/textViewLocationDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp" />
+    <Button
+        android:id="@+id/buttonShowAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewLocationDetails"
+        android:layout_centerHorizontal="true"
+        android:text="Show Address" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+public class MainActivity extends AppCompatActivity implements LocationListener {
+    private static final int PERMISSION_REQUEST_LOCATION = 1001;
+    private TextView textViewLocationDetails;
+    private Button buttonShowAddress;
+    private LocationManager locationManager;
+    private boolean isButtonClicked = false;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        textViewLocationDetails = findViewById(R.id.textViewLocationDetails);
+        buttonShowAddress = findViewById(R.id.buttonShowAddress);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        buttonShowAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isButtonClicked = true;
+                getLocation();
+            }
+        });
+    }
+    private void getLocation() {
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSION_REQUEST_LOCATION);
+            } else {
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    getAddressFromLocation(latitude, longitude);
+                } else {
+                    textViewLocationDetails.setText("Unable to retrieve location.");
+                }
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+    private void getAddressFromLocation(double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (!addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String addressLine = address.getAddressLine(0);
+                String city = address.getLocality();
+                String country = address.getCountryName();
+                textViewLocationDetails.setText("Address: " + addressLine + "\nCity: " + city + "\nCountry: " + country);
+            } else {
+                textViewLocationDetails.setText("No address found for this location.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            textViewLocationDetails.setText("Error: " + e.getMessage());
+        }
+    }
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        if (isButtonClicked) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
+            getAddressFromLocation(latitude, longitude);
+        }
+    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {}
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {}
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocation();
+            } else {
+                Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (locationManager != null) {
+            locationManager.removeUpdates(this);
+        }
+    }
+}

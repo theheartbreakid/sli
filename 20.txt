@@ -1,0 +1,239 @@
+import java.sql.*;
+import java.util.Scanner;
+public class DeleteEmployee {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter employee ID: ");
+        int employeeId = scanner.nextInt();
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            Connection con = DriverManager.getConnection("jdbc:odbc:DSN");
+            String deleteQuery = "DELETE FROM employee WHERE ENo = ?";
+            PreparedStatement pstmt = con.prepareStatement(deleteQuery);
+            pstmt.setInt(1, employeeId);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Employee details deleted successfully.");
+            } else {
+                System.out.println("No employee found with the given ID.");
+            }
+            pstmt.close();
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        scanner.close();
+    }
+}
+
+
+import java.applet.*;
+import java.awt.*;
+public class TempleApplet  extends Applet implements Runnable {
+    Thread animationThread;
+    public void init() {
+        animationThread = new Thread(this);
+        animationThread.start();
+    }
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(100);
+                repaint();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void paint(Graphics g) {
+        drawTemple(g);
+    }
+    private void drawTemple(Graphics g) {
+        g.drawLine(400, 100, 400, 300);
+        g.drawRect(400, 100, 100, 100);
+        g.drawLine(400, 300, 100, 500);
+        g.drawLine(400, 300, 700, 500);
+        g.drawRect(100, 500, 600, 300);
+        g.drawRect(350, 700, 100, 100);
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:onClick="changeImage"
+        android:text="Change Image" />
+</RelativeLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+public class MainActivity extends AppCompatActivity {
+    private ImageView imageView;
+    private int currentIndex = 0;
+    private int[] imageResources = {R.drawable.ic_launcher_foreground, R.drawable.ic_launcher_background};
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        imageView = findViewById(R.id.imageView);
+        imageView.setImageResource(imageResources[currentIndex]);
+    }
+    public void changeImage(View view) {
+        currentIndex = (currentIndex + 1) % imageResources.length;
+        imageView.setImageResource(imageResources[currentIndex]);
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.stringoperation_radiobutton.MainActivity"
+    android:orientation="horizontal">
+    <TextView
+        android:id="@+id/tvRg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enter String:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="40dp" />
+    <EditText
+        android:id="@+id/tvRg1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@id/tvRg"
+        android:text=""
+        android:textSize="40dp">
+    </EditText>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvRg"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_marginTop="20dp"
+        android:id="@+id/radioGroup" >
+        <RadioButton
+            android:id="@+id/rb1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checked="false"
+            android:text="Uppercase" />
+        <RadioButton
+            android:id="@+id/rb2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lowercase"
+            android:checked="false" />
+        <RadioButton
+            android:id="@+id/rb3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Right 5 character"
+            android:checked="false" />
+        <RadioButton
+            android:id="@+id/rb4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Left 5 character"
+            android:checked="false" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_below="@id/rb4"
+            android:text="Click"
+            android:textSize="20dp"
+            android:id="@+id/btn_submit"
+            android:textAlignment="center">
+        </Button>
+        <TextView
+            android:id="@+id/tvRg2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Output"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="40dp">
+        </TextView>
+        <TextView
+            android:id="@+id/tvRg3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_toRightOf="@id/tvRg2"
+            android:text=""
+            android:textSize="40dp">
+        </TextView>
+    </RadioGroup>
+</RelativeLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import java.util.Locale;
+public class MainActivity extends AppCompatActivity {
+    RadioGroup radioGroup;
+    RadioButton rb1, rb2, rb3, rb4;
+    RadioButton selectedRadioButton;
+    Button buttonSubmit;
+    TextView tvRg3, tvRg1;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        buttonSubmit = findViewById(R.id.btn_submit);
+        radioGroup = findViewById(R.id.radioGroup);
+        rb1 = findViewById(R.id.rb1);
+        rb2 = findViewById(R.id.rb2);
+        rb3 = findViewById(R.id.rb3);
+        rb4 = findViewById(R.id.rb4);
+        tvRg3 = findViewById(R.id.tvRg3);
+        tvRg1 = findViewById(R.id.tvRg1);
+        buttonSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectedRadioButton = findViewById(radioGroup.getCheckedRadioButtonId());
+                String radioButtonText = selectedRadioButton.getText().toString();
+                String inputString = tvRg1.getText().toString();
+                String outputString = "";
+                if (rb1.isChecked()) {
+                    outputString = inputString.toUpperCase(Locale.ROOT);
+                } else if (rb2.isChecked()) {
+                    outputString = inputString.toLowerCase(Locale.ROOT);
+                } else if (rb3.isChecked()) {
+                    outputString = inputString.substring(inputString.length() - 5);
+                } else if (rb4.isChecked()) {
+                    outputString = inputString.substring(0, 5);
+                }
+                tvRg3.setText(outputString);
+            }
+        });
+    }
+}

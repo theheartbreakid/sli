@@ -1,0 +1,292 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sum of First and Last Digit</title>
+</head>
+<body>
+    <h2>Sum of First and Last Digit Calculator</h2>
+    <form action="" method="post">
+        Enter a number: <input type="text" name="number" required>
+        <input type="submit" value="Calculate">
+    </form>
+    <%
+        if(request.getMethod().equals("POST")) {
+            int num = Integer.parseInt(request.getParameter("number"));
+            int sum = Character.getNumericValue(String.valueOf(num).charAt(0)) + num % 10;
+    %>
+            <p style="color: red; font-size: 18px;">
+                Sum of first and last digit of <%= num %> is <%= sum %>.
+            </p>
+    <%
+        }
+    %>
+</body>
+</html>
+
+
+import java.awt.*;
+import java.applet.*;
+public class TrafficSignal extends Applet implements Runnable {
+    Thread t;
+    int currentColor = 0;
+    boolean stopFlag;
+    public void init() {
+        setBackground(Color.white);
+    }
+    public void start() {
+        t = new Thread(this);
+        stopFlag = false;
+        t.start();
+    }
+    public void stop() {
+        stopFlag = true;
+    }
+    public void run() {
+        while (!stopFlag) {
+            try {
+                Thread.sleep(3000);
+                currentColor = (currentColor + 1) % 3;
+                repaint();
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrupted");
+            }
+        }
+    }
+    public void paint(Graphics g) {
+        g.setColor(Color.gray);
+        g.fillRect(100, 100, 20, 200);
+        g.setColor(Color.black);
+        g.fillOval(90, 100, 40, 40);
+        g.fillOval(90, 160, 40, 40);
+        g.fillOval(90, 220, 40, 40);
+        switch (currentColor) {
+            case 0:
+                g.setColor(Color.red);
+                g.fillOval(90, 100, 40, 40);
+                break;
+            case 1:
+                g.setColor(Color.yellow);
+                g.fillOval(90, 160, 40, 40);
+                break;
+            case 2:
+                g.setColor(Color.green);
+                g.fillOval(90, 220, 40, 40);
+                break;
+        }
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ness Wadia College of Commerce"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.2" />
+    <Button
+        android:id="@+id/btnRed"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="RED"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toStartOf="@+id/btnBlue"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv" />
+    <Button
+        android:id="@+id/btnBlue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="BLUE"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toStartOf="@+id/btnGreen"
+        app:layout_constraintStart_toEndOf="@id/btnRed"
+        app:layout_constraintTop_toBottomOf="@id/tv" />
+    <Button
+        android:id="@+id/btnGreen"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="GREEN"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toStartOf="@+id/btnYellow"
+        app:layout_constraintStart_toEndOf="@id/btnBlue"
+        app:layout_constraintTop_toBottomOf="@id/tv" />
+    <Button
+        android:id="@+id/btnYellow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="YELLOW"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnGreen"
+        app:layout_constraintTop_toBottomOf="@id/tv" />
+    <Button
+        android:id="@+id/btnPurple"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="PURPLE"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnRed" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+public class MainActivity extends AppCompatActivity {
+    TextView tv;
+    Button btnRed, btnBlue, btnGreen, btnYellow, btnPurple;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        tv = findViewById(R.id.tv);
+        btnRed = findViewById(R.id.btnRed);
+        btnBlue = findViewById(R.id.btnBlue);
+        btnGreen = findViewById(R.id.btnGreen);
+        btnYellow = findViewById(R.id.btnYellow);
+        btnPurple = findViewById(R.id.btnPurple);
+        btnRed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv.setTextSize(30F);
+                tv.setTextColor(Color.parseColor("#FF0000"));
+                tv.setTypeface(null, Typeface.BOLD); // Change font style to bold
+            }
+        });
+        btnBlue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv.setTextSize(20F);
+                tv.setTextColor(Color.parseColor("#0000FF"));
+                tv.setTypeface(null, Typeface.ITALIC); // Change font style to italic
+            }
+        });
+        btnGreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv.setTextSize(30F);
+                tv.setTextColor(Color.parseColor("#00FF00"));
+                tv.setTypeface(null, Typeface.NORMAL); // Change font style to normal
+            }
+        });
+        btnYellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv.setTextSize(20F);
+                tv.setTextColor(Color.parseColor("#FFFF00"));
+                tv.setTypeface(null, Typeface.BOLD_ITALIC); // Change font style to bold italic
+            }
+        });
+        btnPurple.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tv.setTextSize(25F);
+                tv.setTextColor(Color.parseColor("#800080")); // Purple color
+                tv.setTypeface(null, Typeface.BOLD); // Change font style to bold
+            }
+        });
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/et_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="enter the number" />
+    <TextView
+        android:id="@+id/et_ans"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="answer" />
+    <Button
+        android:id="@+id/bt_cal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Calculate Factorial" />
+</LinearLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.math.BigInteger;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    EditText number;
+    TextView answer;
+    Button calculate;
+    AlertDialog.Builder builder;
+    BigInteger factorial = BigInteger.ONE;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        initialize();
+        builder = new AlertDialog.Builder(this);
+    }
+    public void initialize() {
+        number = findViewById(R.id.et_no);
+        answer = findViewById(R.id.et_ans);
+        calculate = findViewById(R.id.bt_cal);
+        calculate.setOnClickListener(this);
+    }
+    public void calcFactorial() {
+        factorial = BigInteger.ONE;
+        if (!number.getText().toString().isEmpty()) {
+            int num = Integer.parseInt(number.getText().toString());
+            for (int i = 1; i <= num; i++) {
+                factorial = factorial.multiply(BigInteger.valueOf(i));
+            }
+        }
+    }
+    @Override
+    public void onClick(View v) {
+        calcFactorial();
+        builder.setMessage("Factorial of " + number.getText().toString() + " is : " + factorial.toString())
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.setTitle("Factorial Alert");
+        alert.show();
+        answer.setText("Factorial of " + number.getText().toString() + " is : " + factorial.toString());
+    }
+}

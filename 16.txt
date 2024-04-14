@@ -1,0 +1,242 @@
+Login.jsp
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Result</title>
+</head>
+<body>
+    <% 
+        String Uname = "admin";
+        String PassWord = "password";
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        if (username != null && password != null && 
+            username.equals(Uname) && password.equals(PassWord)) {
+    %>
+        <h2>Login Successfully</h2>
+        <a href="Login.html">Back to Login</a>
+    <%
+        } else {
+    %>
+        <h2>Login Failed</h2>
+        <a href="Error.html">Back to Error</a>
+    <%
+        }
+    %>
+</body>
+</html>
+
+login.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+</head>
+<body>
+    <h2>Login Form</h2>
+    <form action="http://localhost:8083/TYBBACA/Login.jsp" method="post">
+        Username: <input type="text" name="username"><br>
+        Password: <input type="password" name="password"><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
+
+error.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Error</title>
+</head>
+<body>
+    <h2>Login Failed</h2>
+    <p>The username and password do not match.</p>
+    <a href="Login.html">Back to Login</a>
+</body>
+</html>
+
+
+import java.sql.*;
+public class StudentDetails {
+    public static void main(String[] args) {
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            Connection connection = DriverManager.getConnection("jdbc:odbc:DSN");
+            createTable(connection);
+            acceptStudentDetails(connection);
+            displayStudentWithHighestPercentage(connection);
+            connection.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    private static void createTable(Connection connection) throws SQLException {
+        String createTableSQL = "CREATE TABLE IF NOT EXISTS students (rno INT PRIMARY KEY, sname VARCHAR(255), per FLOAT)";
+        Statement createTableStatement = connection.createStatement();
+        createTableStatement.executeUpdate(createTableSQL);
+        createTableStatement.close();
+    }
+    private static void acceptStudentDetails(Connection connection) throws SQLException {
+        try (Scanner scanner = new Scanner(System.in)) {
+            for (int i = 1; i <= 5; i++) {
+                System.out.println("Enter details for student " + i + ":");
+                System.out.print("RNo: ");
+                int rno = scanner.nextInt();
+                System.out.print("SName: ");
+                String sname = scanner.next();
+                System.out.print("Percentage: ");
+                float per = scanner.nextFloat();
+                String insertSQL = "INSERT INTO students (rno, sname, per) VALUES (?, ?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertSQL);
+                insertStatement.setInt(1, rno);
+                insertStatement.setString(2, sname);
+                insertStatement.setFloat(3, per);
+                insertStatement.executeUpdate();
+                insertStatement.close();
+            }
+        }
+    }
+    private static void displayStudentWithHighestPercentage(Connection connection) throws SQLException {
+        String selectMaxPerSQL = "SELECT * FROM students WHERE per = (SELECT MAX(per) FROM students)";
+        PreparedStatement selectMaxPerStatement = connection.prepareStatement(selectMaxPerSQL);
+        ResultSet resultSet = selectMaxPerStatement.executeQuery();
+        if (resultSet.next()) {
+            System.out.println("\nStudent with highest percentage:");
+            System.out.println("RNo: " + resultSet.getInt("rno"));
+            System.out.println("SName: " + resultSet.getString("sname"));
+            System.out.println("Percentage: " + resultSet.getFloat("per"));
+        } else {
+            System.out.println("\nNo records found.");
+        }
+        resultSet.close();
+        selectMaxPerStatement.close();
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hello"
+                android:textSize="30dp" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 4" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 5" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 6" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 7" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 8" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 9" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button 10" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/timeDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected Time"
+        android:textSize="24sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+    <Button
+        android:id="@+id/pickTimeBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick Time"
+        android:layout_below="@id/timeDisplay"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import java.util.Calendar;
+public class MainActivity extends AppCompatActivity {
+    private TextView timeDisplay;
+    private Button pickTimeBtn;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        timeDisplay = findViewById(R.id.timeDisplay);
+        pickTimeBtn = findViewById(R.id.pickTimeBtn);
+        pickTimeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar calendar = Calendar.getInstance();
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+                TimePickerDialog timePickerDialog = new TimePickerDialog(MainActivity.this,
+                        new TimePickerDialog.OnTimeSetListener() {
+                            @Override
+                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                                timeDisplay.setText(String.format("%02d:%02d", hourOfDay, minute));
+                            }
+                        }, hour, minute, true);
+                timePickerDialog.show();
+            }
+        });
+    }
+}

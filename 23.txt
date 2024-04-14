@@ -1,0 +1,260 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+public class CollegeDetails extends JFrame {
+    private JTable collegeTable;
+    public CollegeDetails() {
+        setTitle("College Details");
+        setSize(600, 400);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        collegeTable = new JTable();
+        JScrollPane scrollPane = new JScrollPane(collegeTable);
+        add(scrollPane);
+        displayCollegeDetails();
+    }
+    private void displayCollegeDetails() {
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            Connection con = DriverManager.getConnection("jdbc:odbc:CollegeDB");
+            String query = "SELECT * FROM college";
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(query);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("CID");
+            model.addColumn("CName");
+            model.addColumn("Address");
+            model.addColumn("Year");
+            while (rs.next()) {
+                Object[] rowData = {
+                        rs.getInt("CID"),
+                        rs.getString("CName"),
+                        rs.getString("address"),
+                        rs.getInt("Year")
+                };
+                model.addRow(rowData);
+            }
+            collegeTable.setModel(model);
+            rs.close();
+            stmt.close();
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new CollegeDetails().setVisible(true);
+            }
+        });
+    }
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h2>Login Form</h2>
+    <form action="http://localhost:8083/TYBBACA/LoginServlet" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
+
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.sql.*;
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            conn = DriverManager.getConnection("jdbc:odbc:mydsn");
+            stmt = conn.createStatement();
+            String query = "SELECT * FROM users WHERE username='" + username + "' AND password='" + password + "'";
+            rs = stmt.executeQuery(query);
+            if (rs.next()) {
+                out.println("<html><body>");
+                out.println("<h2>Login Successful!</h2>");
+                out.println("</body></html>");
+            } else {
+                out.println("<html><body>");
+                out.println("<h2>Login Failed. Incorrect username or password.</h2>");
+                out.println("</body></html>");
+            }
+        } catch (Exception e) {
+            out.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                out.println("Exception: " + e.getMessage());
+            }
+        }
+    }
+}
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/editTextDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:hint="Select Date"
+        android:inputType="none"
+        android:focusable="false" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.Calendar;
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextDate;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        editTextDate = findViewById(R.id.editTextDate);
+        editTextDate.setOnClickListener(v -> {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    MainActivity.this,
+                    (view, selectedYear, selectedMonth, selectedDayOfMonth) -> {
+                        editTextDate.setText(selectedDayOfMonth + "/" + (selectedMonth + 1) + "/" + selectedYear);
+                    },
+                    year, month, dayOfMonth);
+            datePickerDialog.show();
+        });
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.widget.ListView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.ArrayList;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ListView listView = findViewById(R.id.listView);
+        ArrayList<Book> books = new ArrayList<>();
+        books.add(new Book("C", "Author 1"));
+        books.add(new Book("CPP", "Author 2"));
+        books.add(new Book("Java", "Author 3"));
+        books.add(new Book("Android", "Author 4"));
+        books.add(new Book("HTML", "Author 5"));
+        BookAdapter adapter = new BookAdapter(this, books);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Book selectedBook = books.get(position);
+            String authorName = selectedBook.getAuthorName();
+            Toast.makeText(MainActivity.this, "Author: " + authorName, Toast.LENGTH_SHORT).show();
+        });
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<!-- list_item.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+    <TextView
+        android:id="@+id/bookName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/authorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#888888" />
+</LinearLayout>
+package com.app.myapplication;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+import java.util.ArrayList;
+public class BookAdapter extends ArrayAdapter<Book> {
+    public BookAdapter(Context context, ArrayList<Book> books) {
+        super(context, 0, books);
+    }
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        Book book = getItem(position);
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+        }
+        TextView bookName = convertView.findViewById(R.id.bookName);
+        TextView authorName = convertView.findViewById(R.id.authorName);
+        bookName.setText(book.getBookName());
+        authorName.setText(book.getAuthorName());
+        return convertView;
+    }
+}
+package com.app.myapplication;
+public class Book {
+    private String bookName;
+    private String authorName;
+    public Book(String bookName, String authorName) {
+        this.bookName = bookName;
+        this.authorName = authorName;
+    }
+    public String getBookName() {
+        return bookName;
+    }
+    public String getAuthorName() {
+        return authorName;
+    }
+}

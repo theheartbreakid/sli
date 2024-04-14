@@ -1,0 +1,302 @@
+import java.util.*;
+public class Slip13_q1 extends Thread {
+    public void run() {
+        for (int i = 0; i < 5; i++) {
+            System.out.println("The thread name is " + Thread.currentThread().getName());
+        }
+    }
+    public static void main(String[] args) {
+        Slip13_q1 t1 = new Slip13_q1();
+        t1.setName("Main Thread");
+        t1.start();
+        Thread t2 = Thread.currentThread(); // Get current thread
+        t2.setName("Current thread");
+        for (int i = 0; i < 5; i++) {
+            System.out.println("The thread name is " + t2.getName()); // Use t2 to get current thread's name
+        }
+    }
+}
+
+<%@page import="java.sql.*"%> 
+<%
+try {
+    Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+    Connection con = DriverManager.getConnection("jdbc:odbc:DSN", "", ""); // Replace DSN with your ODBC data source name
+    Statement st = con.createStatement();
+    ResultSet rs = st.executeQuery("SELECT * FROM college");
+%>
+<table border="1"> 
+    <tr>
+        <th>CollegeID</th>
+        <th>Coll_Name</th>
+        <th>Address</th>
+    </tr> 
+<%
+    while(rs.next()) {
+%>
+    <tr> 
+        <td><%= rs.getInt("CollegeID") %></td> 
+        <td><%= rs.getString("Coll_Name") %></td> 
+        <td><%= rs.getString("Address") %></td> 
+    </tr> 
+<%
+    }
+} catch(Exception e) {
+    e.printStackTrace();
+}
+%>
+</table>
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/et_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter UserName"
+        android:textSize="30sp"
+        android:autofillHints=""
+        android:inputType="text" />
+    <EditText
+        android:id="@+id/et_pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Password"
+        android:textSize="30sp"
+        android:autofillHints=""
+        android:inputType="textPassword" />
+    <Button
+        android:id="@+id/bt_okay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Okay" />
+    <Button
+        android:id="@+id/bt_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel" />
+</LinearLayout>
+package com.mohsin.myapplication;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        EditText et_user = findViewById(R.id.et_user);
+        EditText et_pass = findViewById(R.id.et_pass);
+        Button bt_okay = findViewById(R.id.bt_okay);
+        Button bt_cancel = findViewById(R.id.bt_cancel);
+        bt_okay.setOnClickListener(view -> {
+            String user = et_user.getText().toString();
+            String pass = et_pass.getText().toString();
+            if (user.equals("admin") && pass.equals("admin")) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(MainActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+        bt_cancel.setOnClickListener(view -> {
+            et_user.getText().clear();
+            et_pass.getText().clear();
+        });
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvResult"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:textSize="50sp" />
+</LinearLayout>
+package com.mohsin.myapplication;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class SecondActivity extends AppCompatActivity {
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+        TextView tvResult = findViewById(R.id.tvResult);
+        tvResult.setText("Login Successful");
+    }
+}
+
+
+
+package com.mohsin.myapplication;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private EditText nameEditText, phoneEditText;
+    private TextView displayTextView;
+    private DbHelper dbHelper;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        nameEditText = findViewById(R.id.nameEditText);
+        phoneEditText = findViewById(R.id.phoneEditText);
+        displayTextView = findViewById(R.id.displayTextView);
+        Button addButton = findViewById(R.id.addButton);
+        Button deleteButton = findViewById(R.id.deleteButton);
+        dbHelper = new DbHelper(this);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameEditText.getText().toString().trim();
+                String phone = phoneEditText.getText().toString().trim();
+                if (!name.isEmpty() && !phone.isEmpty()) {
+                    long studentId = addStudent(name, phone);
+                    if (studentId != -1) {
+                        Toast.makeText(MainActivity.this, "Student added successfully with ID: " + studentId, Toast.LENGTH_SHORT).show();
+                        displayAllStudents();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Failed to add student", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter name and phone number", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameEditText.getText().toString().trim();
+                if (!name.isEmpty()) {
+                    int deletedRows = deleteStudent(name);
+                    if (deletedRows > 0) {
+                        Toast.makeText(MainActivity.this, "Student deleted successfully", Toast.LENGTH_SHORT).show();
+                        displayAllStudents();
+                    } else {
+                        Toast.makeText(MainActivity.this, "No student found with this name", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter name to delete", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        displayAllStudents();
+    }
+    private long addStudent(String name, String phone) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(DbHelper.COLUMN_NAME, name);
+        values.put(DbHelper.COLUMN_PHONE, phone);
+        return db.insert(DbHelper.TABLE_STUDENT, null, values);
+    }
+    private int deleteStudent(String name) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        return db.delete(DbHelper.TABLE_STUDENT, DbHelper.COLUMN_NAME + "=?", new String[]{name});
+    }
+    private void displayAllStudents() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.query(DbHelper.TABLE_STUDENT, null, null, null, null, null, null);
+        StringBuilder stringBuilder = new StringBuilder();
+        while (cursor.moveToNext()) {
+            int id = cursor.getInt(cursor.getColumnIndex(DbHelper.COLUMN_ID));
+            String name = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_NAME));
+            String phone = cursor.getString(cursor.getColumnIndex(DbHelper.COLUMN_PHONE));
+            stringBuilder.append("ID: ").append(id).append(", Name: ").append(name)
+                    .append(", Phone: ").append(phone).append("\n");
+        }
+        cursor.close();
+        displayTextView.setText(stringBuilder.toString());
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name" />
+    <EditText
+        android:id="@+id/phoneEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone" />
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Student" />
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Student" />
+    <TextView
+        android:id="@+id/displayTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+</LinearLayout>
+package com.mohsin.myapplication;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+public class DbHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "students.db";
+    private static final int DATABASE_VERSION = 1;
+    public static final String TABLE_STUDENT = "student";
+    public static final String COLUMN_ID = "Sid";
+    public static final String COLUMN_NAME = "Sname";
+    public static final String COLUMN_PHONE = "phno";
+    private static final String CREATE_TABLE_STUDENT = "CREATE TABLE " +
+            TABLE_STUDENT + "(" +
+            COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_NAME + " TEXT NOT NULL, " +
+            COLUMN_PHONE + " TEXT);";
+    public DbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_TABLE_STUDENT);
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_STUDENT);
+        onCreate(db);
+    }
+}

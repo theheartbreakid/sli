@@ -1,0 +1,241 @@
+<html>
+<body>
+<form method=post action="http://localhost:8083/TYBBACA/perfect.jsp"> 
+Enter any no:<input type="text" name="t1" >
+<br>
+<input type="submit" >
+</form>
+</body>
+</html>
+
+<%@include file="perfect.html"%>
+<html>
+<body>
+<%int sum=0,n; %>
+<% n=Integer.parseInt(request.getParameter("t1"));
+out.println(" given number is: "+n);
+for(int i = 1; i < n; i++)
+{
+if(n % i == 0)
+{
+sum = sum + i;
+}
+}
+if(sum == n)
+{
+out.println("<br>"+n+" is Perfect no.");
+}
+else
+{
+out.println("<br>"+n+" is not Perfect");
+}  
+    %>  
+</body>
+</html>       
+
+
+
+import java.awt.*;
+import java.applet.*;
+public class flag extends Applet implements Runnable
+{
+    Thread t;
+    int x1,x2,x3,y3,x4,y4,x5,ln;   
+    public void init()
+    {
+        t=new Thread(this);
+        t.start();
+        ln=1;
+    }   
+    public void run()
+    {
+        try
+        {
+            if(ln==1)
+            {
+                for(x1=200;x1>100;)
+                {
+                    t.sleep(200);
+                    repaint();
+                }
+            }           
+            ln=2;           
+            if(ln==2)
+            {
+                for(x2=100;x2<150;)
+                {
+                    t.sleep(200);
+                    repaint();
+                }
+            }           
+            ln=3;           
+            if(ln==3)
+            {
+                for(x3=150,y3=100;x3>125&&y3<125;)
+                {
+                    t.sleep(200);
+                    repaint();
+                }
+            }           
+            ln=4;           
+            if(ln==4)
+            {
+                for(x4=125,y4=125;x4<150&&y4<150;)
+                {
+                    t.sleep(200);
+                    repaint();
+                }
+            }           
+            ln=5;           
+            if(ln==5)
+            {
+                for(x5=150;x5>100;)
+                {
+                    t.sleep(200);
+                    repaint();
+                }
+            }           
+            ln=1;
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
+        run();  
+    }   
+    public void paint(Graphics g)
+    {
+        if(ln==1&&x1>100)
+        {
+            g.drawLine(100,200,100,x1-=5);
+        }       
+        if(ln==2&&x2<150)
+        {
+            g.drawLine(100,200,100,100);
+            g.drawLine(100,100,x2+=5,100);
+        }       
+        if(ln==3&&x3>125&&y3<125)
+        {
+            g.drawLine(100,200,100,100);
+            g.drawLine(100,100,150,100);
+            g.drawLine(150,100,x3-=5,y3+=5);
+        }       
+        if(ln==4&&x4<150&&y4<150)
+        {
+            g.drawLine(100,200,100,100);
+            g.drawLine(100,100,150,100);
+            g.drawLine(150,100,125,125);
+            g.drawLine(125,125,x4+=5,y4+=5);
+        }       
+        if(ln==5&&x5>100)
+        {
+            g.drawLine(100,200,100,100);
+            g.drawLine(100,100,150,100);
+            g.drawLine(150,100,125,125);
+            g.drawLine(125,125,150,150);
+            g.drawLine(150,150,x5-=5,150);
+        }                      
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lifecycle Activity"
+        android:textSize="24sp"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Log.d("Lifecycle", "onCreate invoked");
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d("Lifecycle", "onStart invoked");
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("Lifecycle", "onResume invoked");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d("Lifecycle", "onPause invoked");
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("Lifecycle", "onStop invoked");
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("Lifecycle", "onDestroy invoked");
+    }
+}
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <Button
+        android:id="@+id/bt_show"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50sp"
+        android:text="Show Dialog" />
+    <TextView
+        android:id="@+id/txtdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50sp"
+        android:textSize="30sp" />
+</LinearLayout>
+package com.app.myapplication;
+import android.app.DatePickerDialog;
+import android.icu.util.Calendar;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        TextView txtdate = findViewById(R.id.txtdate);
+        Button bt_show = findViewById(R.id.bt_show);
+        bt_show.setOnClickListener(view -> {
+            final Calendar calendar = Calendar.getInstance();
+            int date = calendar.get(Calendar.DATE);
+            int month = calendar.get(Calendar.MONTH);
+            int year = calendar.get(Calendar.YEAR);
+            new DatePickerDialog(MainActivity.this, (DatePicker datePicker, int yearSelected, int monthSelected, int dayOfMonth) -> {
+                txtdate.setText("Selected date is : " + dayOfMonth + "-" + monthSelected + "-" + yearSelected);
+            }, year, month, date).show();
+        });
+    }
+}

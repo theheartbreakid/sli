@@ -1,0 +1,402 @@
+<%@ page language="java" contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<body>
+    <form action="http://localhost:8083/TYBBACA/numword.jsp" method="post">
+        Enter a number: <input type="number" name="number" required>
+        <input type="submit" value="Convert">
+    </form>
+    <% 
+        if(request.getParameter("number") != null) {
+            int number = Integer.parseInt(request.getParameter("number"));
+            String[] words = {"Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine"};
+            String numInWords = "";
+            while (number > 0) {
+                numInWords = words[number % 10] + " " + numInWords;
+                number /= 10;
+            }
+    %>
+    <p style="color: red;"><%= numInWords %></p>
+    <% } %>
+</body>
+</html>
+
+
+import java.sql.*;
+public class EmployeeManagementSystem {
+    static final String JDBC_DRIVER = "sun.jdbc.odbc.JdbcOdbcDriver";
+    static Connection conn = null;
+    static Statement stmt = null;
+    static ResultSet rs = null;
+    public static void main(String[] args) {
+        try {
+            Class.forName(JDBC_DRIVER);
+            conn = DriverManager.getConnection("jdbc:odbc:EmpDB");
+            stmt = conn.createStatement();
+            System.out.println("Connected to the database...");
+            displayMenu();
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    static void displayMenu() throws SQLException {
+        int choice;
+        do {
+            System.out.println("\nMenu:");
+            System.out.println("1. Insert");
+            System.out.println("2. Update");
+            System.out.println("3. Delete");
+            System.out.println("4. Search");
+            System.out.println("5. Display");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = readIntFromConsole();
+            switch (choice) {
+                case 1:
+                    insertEmployee();
+                    break;
+                case 2:
+                    updateEmployee();
+                    break;
+                case 3:
+                    deleteEmployee();
+                    break;
+                case 4:
+                    searchEmployee();
+                    break;
+                case 5:
+                    displayEmployees();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 6);
+    }
+    static void insertEmployee() throws SQLException {
+        System.out.println("Enter employee details:");
+        System.out.print("Employee Number: ");
+        int eno = readIntFromConsole();
+        System.out.print("Employee Name: ");
+        String ename = readStringFromConsole();
+        System.out.print("Salary: ");
+        double salary = readDoubleFromConsole();
+        System.out.print("Designation: ");
+        String desg = readStringFromConsole();
+        String sql = "INSERT INTO Emp (ENo, EName, salary, Desg) VALUES (?, ?, ?, ?)";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, eno);
+        pstmt.setString(2, ename);
+        pstmt.setDouble(3, salary);
+        pstmt.setString(4, desg);
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Employee inserted successfully.");
+        } else {
+            System.out.println("Failed to insert employee.");
+        }
+    }
+    static void updateEmployee() throws SQLException {
+        System.out.print("Enter employee number to update: ");
+        int eno = readIntFromConsole();
+        System.out.println("Enter new details:");
+        System.out.print("Employee Name: ");
+        String ename = readStringFromConsole();
+        System.out.print("Salary: ");
+        double salary = readDoubleFromConsole();
+        System.out.print("Designation: ");
+        String desg = readStringFromConsole();
+        String sql = "UPDATE Emp SET EName=?, salary=?, Desg=? WHERE ENo=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, ename);
+        pstmt.setDouble(2, salary);
+        pstmt.setString(3, desg);
+        pstmt.setInt(4, eno);
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Employee updated successfully.");
+        } else {
+            System.out.println("Failed to update employee.");
+        }
+    }
+    static void deleteEmployee() throws SQLException {
+        System.out.print("Enter employee number to delete: ");
+        int eno = readIntFromConsole();
+        String sql = "DELETE FROM Emp WHERE ENo=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, eno);
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            System.out.println("Employee deleted successfully.");
+        } else {
+            System.out.println("Failed to delete employee.");
+        }
+    }
+    static void searchEmployee() throws SQLException {
+        System.out.print("Enter employee number to search: ");
+        int eno = readIntFromConsole();
+        String sql = "SELECT * FROM Emp WHERE ENo=?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, eno);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            System.out.println("Employee found:");
+            System.out.println("Employee Number: " + rs.getInt("ENo"));
+            System.out.println("Employee Name: " + rs.getString("EName"));
+            System.out.println("Salary: " + rs.getDouble("salary"));
+            System.out.println("Designation: " + rs.getString("Desg"));
+        } else {
+            System.out.println("Employee not found.");
+        }
+    }
+    static void displayEmployees() throws SQLException {
+        String sql = "SELECT * FROM Emp";
+        ResultSet rs = stmt.executeQuery(sql);
+        System.out.println("Employee details:");
+        while (rs.next()) {
+            System.out.println("Employee Number: " + rs.getInt("ENo"));
+            System.out.println("Employee Name: " + rs.getString("EName"));
+            System.out.println("Salary: " + rs.getDouble("salary"));
+            System.out.println("Designation: " + rs.getString("Desg"));
+            System.out.println();
+        }
+    }
+    static int readIntFromConsole() {
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        return scanner.nextInt();
+    }
+    static double readDoubleFromConsole() {
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        return scanner.nextDouble();
+    }
+    static String readStringFromConsole() {
+        java.util.Scanner scanner = new java.util.Scanner(System.in);
+        return scanner.nextLine();
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <Switch
+        android:id="@+id/switchButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true" />
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="Off"
+        android:textOn="On"
+        android:layout_below="@id/switchButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
+import android.widget.ToggleButton;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        Switch switchButton = findViewById(R.id.switchButton);
+        ToggleButton toggleButton = findViewById(R.id.toggleButton);
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(MainActivity.this, "Switch is ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Switch is OFF", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(MainActivity.this, "Toggle is ON", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Toggle is OFF", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/etCompanyName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Company Name"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Address"
+        android:layout_below="@id/etCompanyName"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etPhoneNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:layout_below="@id/etAddress"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <Button
+        android:id="@+id/btnAddCompany"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Company"
+        android:layout_below="@id/etPhoneNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/btnShowCompanies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Companies"
+        android:layout_below="@id/btnAddCompany"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+    <TextView
+        android:id="@+id/tvCompanyDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnShowCompanies"
+        android:layout_marginTop="20dp"
+        android:padding="16dp"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private SQLiteDatabase database;
+    private EditText etCompanyName, etAddress, etPhoneNumber;
+    private Button btnAddCompany, btnShowCompanies;
+    private TextView tvCompanyDetails;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        database = openOrCreateDatabase("CompanyDatabase", MODE_PRIVATE, null);
+        createCompanyTable();
+        etCompanyName = findViewById(R.id.etCompanyName);
+        etAddress = findViewById(R.id.etAddress);
+        etPhoneNumber = findViewById(R.id.etPhoneNumber);
+        btnAddCompany = findViewById(R.id.btnAddCompany);
+        btnShowCompanies = findViewById(R.id.btnShowCompanies);
+        tvCompanyDetails = findViewById(R.id.tvCompanyDetails);
+        btnAddCompany.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCompanyInfo();
+            }
+        });
+        btnShowCompanies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCompanies();
+            }
+        });
+    }
+    private void createCompanyTable() {
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS Company (" +
+                "id INTEGER PRIMARY KEY," +
+                "name TEXT," +
+                "address TEXT," +
+                "phno TEXT" +
+                ")";
+        try {
+            database.execSQL(createTableQuery);
+            Toast.makeText(this, "Company table created successfully.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error creating Company table.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void addCompanyInfo() {
+        String companyName = etCompanyName.getText().toString().trim();
+        String address = etAddress.getText().toString().trim();
+        String phoneNumber = etPhoneNumber.getText().toString().trim();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", companyName);
+        contentValues.put("address", address);
+        contentValues.put("phno", phoneNumber);
+        long result = database.insert("Company", null, contentValues);
+        if (result != -1) {
+            Toast.makeText(this, "Company information added successfully.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error adding company information.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void showCompanies() {
+        StringBuilder companyDetails = new StringBuilder();
+        Cursor cursor = database.rawQuery("SELECT * FROM Company", null);
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex("id"));
+                String name = cursor.getString(cursor.getColumnIndex("name"));
+                String address = cursor.getString(cursor.getColumnIndex("address"));
+                String phoneNumber = cursor.getString(cursor.getColumnIndex("phno"));
+                String record = "ID: " + id + ", Name: " + name + ", Address: " + address + ", Phone: " + phoneNumber;
+                companyDetails.append(record).append("\n");
+            } while (cursor.moveToNext());
+            tvCompanyDetails.setText(companyDetails.toString());
+        } else {
+            Toast.makeText(this, "No records found.", Toast.LENGTH_SHORT).show();
+        }
+        cursor.close();
+    }
+}

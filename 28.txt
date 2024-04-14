@@ -1,0 +1,328 @@
+class MessageUtil {
+    public static synchronized void printMessage(String message) {
+        try {
+            Thread.sleep(1000);
+            System.out.println(Thread.currentThread().getName() + ": " + message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+class MyThread extends Thread {
+    private String message;
+    public MyThread(String message) {
+        this.message = message;
+    }
+    public void run() {
+        MessageUtil.printMessage(message);
+    }
+}
+public class SynchronizationExample {
+    public static void main(String[] args) {
+        MyThread thread1 = new MyThread("Hello from Thread 1");
+        MyThread thread2 = new MyThread("Hello from Thread 2");
+        thread1.start();
+        thread2.start();
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.*;
+public class EmployeeDetails extends JFrame {
+    private JLabel label;
+    private Choice empNoChoice;
+    private JTable table;
+    public EmployeeDetails() {
+        setTitle("Employee Details");
+        setSize(400, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+        label = new JLabel("Select Emp No:");
+        empNoChoice = new Choice();
+        empNoChoice.add("Select");
+        empNoChoice.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (!"Select".equals(empNoChoice.getSelectedItem())) {
+                    displayEmployeeDetails(Integer.parseInt(empNoChoice.getSelectedItem()));
+                }
+            }
+        });
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(label);
+        topPanel.add(empNoChoice);
+        add(topPanel, BorderLayout.NORTH);
+        table = new JTable();
+        add(new JScrollPane(table), BorderLayout.CENTER);
+    }
+    private void displayEmployeeDetails(int empNo) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            connection = DriverManager.getConnection( "jdbc:odbc:TYBA");
+            statement = connection.prepareStatement("SELECT * FROM Employee WHERE EmpNo = ?");
+            statement.setInt(1, empNo);
+            resultSet = statement.executeQuery();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            DefaultTableModel model = new DefaultTableModel();
+            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                model.addColumn(metaData.getColumnLabel(columnIndex));
+            }
+            while (resultSet.next()) {
+                Object[] row = new Object[columnCount];
+                for (int i = 1; i <= columnCount; i++) {
+                    row[i - 1] = resultSet.getObject(i);
+                }
+                model.addRow(row);
+            }
+            table.setModel(model);
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new EmployeeDetails().setVisible(true);
+            }
+        });
+    }
+}
+
+
+
+<!-- res/layout/activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Your Name"
+        android:layout_marginTop="100dp"
+        android:layout_centerHorizontal="true"/>
+    <Button
+        android:id="@+id/buttonSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:layout_below="@id/editTextName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private EditText editTextName;
+    private Button buttonSend;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        editTextName = findViewById(R.id.editTextName);
+        buttonSend = findViewById(R.id.buttonSend);
+        buttonSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = editTextName.getText().toString().trim();
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                intent.putExtra("person_name", name);
+                startActivity(intent);
+            }
+        });
+    }
+}
+<!-- res/layout/activity_second.xml -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textViewMessage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="24sp"
+    android:layout_gravity="center"/>
+package com.app.myapplication;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class SecondActivity extends AppCompatActivity {
+    private TextView textViewMessage;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+        textViewMessage = findViewById(R.id.textViewMessage);
+        Intent intent = getIntent();
+        String name = intent.getStringExtra("person_name");
+        String greetMessage = "Hello, " + name + "!";
+        textViewMessage.setText(greetMessage);
+    }
+}
+
+
+
+
+
+package com.app.myapplication;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import java.util.List;
+public class CustomAdapter extends ArrayAdapter<AndroidVersion> {
+    private Context mContext;
+    private List<AndroidVersion> mAndroidVersions;
+    public CustomAdapter(@NonNull Context context, @NonNull List<AndroidVersion> androidVersions) {
+        super(context, 0, androidVersions);
+        mContext = context;
+        mAndroidVersions = androidVersions;
+    }
+    @NonNull
+    @Override
+    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+        View listItemView = convertView;
+        if (listItemView == null) {
+            listItemView = LayoutInflater.from(mContext).inflate(R.layout.activity_main, parent, false);
+        }
+        AndroidVersion currentVersion = mAndroidVersions.get(position);
+        ImageView logoImageView = listItemView.findViewById(R.id.logoImageView);
+        logoImageView.setImageResource(currentVersion.getLogoResourceId());
+        TextView versionNameTextView = listItemView.findViewById(R.id.versionNameTextView);
+        versionNameTextView.setText(currentVersion.getVersionName());
+        TextView versionNumberTextView = listItemView.findViewById(R.id.versionNumberTextView);
+        versionNumberTextView.setText(currentVersion.getVersionNumber());
+        return listItemView;
+    }
+}
+<!-- res/layout/activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+        android:id="@+id/androidVersionsListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp" />
+    <TextView
+        android:id="@+id/versionNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logoImageView"
+        android:layout_marginStart="16dp"
+        android:text="Version Name"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/versionNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/versionNameTextView"
+        android:layout_marginStart="16dp"
+        android:text="Version Number"
+        android:textSize="14sp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.widget.ListView;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.ArrayList;
+import java.util.List;
+public class MainActivity extends AppCompatActivity {
+    private ListView mAndroidVersionsListView;
+    private CustomAdapter mCustomAdapter;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mAndroidVersionsListView = findViewById(R.id.androidVersionsListView);
+        List<AndroidVersion> androidVersions = generateAndroidVersions(); // Replace with your data
+        mCustomAdapter = new CustomAdapter(this, androidVersions);
+        mAndroidVersionsListView.setAdapter(mCustomAdapter);
+    }
+    private List<AndroidVersion> generateAndroidVersions() {
+        List<AndroidVersion> androidVersions = new ArrayList<>();
+        androidVersions.add(new AndroidVersion("Android 12", "S", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 11", "R", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 10", "Q", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 9", "Pie", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 8.1", "Oreo", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 8.0", "Oreo", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 7.1", "Nougat", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 7.0", "Nougat", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 6.0", "Marshmallow", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 5.1", "Lollipop", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 5.0", "Lollipop", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 4.4", "KitKat", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 4.3", "Jelly Bean", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 4.2", "Jelly Bean", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 4.1", "Jelly Bean", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 4.0", "Ice Cream Sandwich", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 3.2", "Honeycomb", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 3.1", "Honeycomb", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 3.0", "Honeycomb", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 2.3", "Gingerbread", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 2.2", "Froyo", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 2.1", "Eclair", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 2.0", "Eclair", R.drawable.ic_launcher_background));
+        androidVersions.add(new AndroidVersion("Android 1.6", "Donut", R.drawable.ic_launcher_foreground));
+        androidVersions.add(new AndroidVersion("Android 1.5", "Cupcake", R.drawable.ic_launcher_background));
+        return androidVersions;
+    }
+}
+package com.app.myapplication;
+public class AndroidVersion {
+    private String mVersionName;
+    private String mVersionNumber;
+    private int mLogoResourceId;
+    public AndroidVersion(String versionName, String versionNumber, int logoResourceId) {
+        mVersionName = versionName;
+        mVersionNumber = versionNumber;
+        mLogoResourceId = logoResourceId;
+    }
+    public String getVersionName() {
+        return mVersionName;
+    }
+    public String getVersionNumber() {
+        return mVersionNumber;
+    }
+    public int getLogoResourceId() {
+        return mLogoResourceId;
+    }
+}

@@ -1,0 +1,442 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<body>
+    <h1>Reverse String</h1>
+    <form method="post" action="http://localhost:8083/TYBBACA/reverse.jsp">
+        <label for="inputString">Enter a string:</label>
+        <input type="text" id="inputString" name="inputString" required>
+        <button type="submit">Reverse</button>
+    </form>
+    <%
+        if (request.getMethod().equals("POST")) {
+            String inputString = request.getParameter("inputString");
+            StringBuilder reversedString = new StringBuilder(inputString).reverse();
+            out.println("<h2>The reversed string is: " + reversedString + "</h2>");
+        }
+    %>
+</body>
+</html>
+
+
+import java.applet.Applet;
+import java.awt.*;
+public class MovingCarApplet extends Applet implements Runnable {
+    int x = 0;
+    int y = 150;
+    Thread t;
+    public void init() {
+        t = new Thread(this);
+        t.start();
+    }
+    public void paint(Graphics g) {
+        g.setColor(Color.RED);
+        g.fillRect(x, y, 150, 70);
+        g.setColor(Color.BLUE);
+        g.fillRect(x + 10, y - 20, 130, 50);
+        g.setColor(Color.BLACK);
+        g.fillOval(x + 10, y + 50, 50, 50);
+        g.fillOval(x + 90, y + 50, 50, 50);
+        int[] xPoints = {x + 10, x + 50, x + 90};
+        int[] yPoints = {y, y - 50, y};
+        g.fillRect(x + 120, y + 10, 20, 10);
+    }
+    public void run() {
+        try {
+            while (true) {
+                x += 5;
+                if (x > getWidth())
+                    x = 0;
+                repaint();
+                Thread.sleep(100);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    <EditText
+        android:id="@+id/editTextFirstName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="First Name"/>
+    <EditText
+        android:id="@+id/editTextMiddleName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextFirstName"
+        android:hint="Middle Name"/>
+    <EditText
+        android:id="@+id/editTextLastName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextMiddleName"
+        android:hint="Last Name"/>
+    <EditText
+        android:id="@+id/editTextDOB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextLastName"
+        android:hint="Date of Birth"/>
+    <EditText
+        android:id="@+id/editTextAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextDOB"
+        android:hint="Address"/>
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextAddress"
+        android:hint="Email"/>
+    <Button
+        android:id="@+id/buttonSubmit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextEmail"
+        android:text="Submit"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.Calendar;
+public class MainActivity extends AppCompatActivity {
+    private EditText firstNameEditText, middleNameEditText, lastNameEditText,
+            dobEditText, addressEditText, emailEditText;
+    private Button submitButton;
+    private Calendar calendar;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        firstNameEditText = findViewById(R.id.editTextFirstName);
+        middleNameEditText = findViewById(R.id.editTextMiddleName);
+        lastNameEditText = findViewById(R.id.editTextLastName);
+        dobEditText = findViewById(R.id.editTextDOB);
+        addressEditText = findViewById(R.id.editTextAddress);
+        emailEditText = findViewById(R.id.editTextEmail);
+        submitButton = findViewById(R.id.buttonSubmit);
+        dobEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validateInput()) {
+                    String firstName = firstNameEditText.getText().toString();
+                    String middleName = middleNameEditText.getText().toString();
+                    String lastName = lastNameEditText.getText().toString();
+                    String dob = dobEditText.getText().toString();
+                    String address = addressEditText.getText().toString();
+                    String email = emailEditText.getText().toString();
+                    Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                    intent.putExtra("firstName", firstName);
+                    intent.putExtra("middleName", middleName);
+                    intent.putExtra("lastName", lastName);
+                    intent.putExtra("dob", dob);
+                    intent.putExtra("address", address);
+                    intent.putExtra("email", email);
+                    startActivity(intent);
+                }
+            }
+        });
+    }
+    private void showDatePickerDialog() {
+        calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        String date = dayOfMonth + "/" + (month + 1) + "/" + year;
+                        dobEditText.setText(date);
+                    }
+                },
+                year, month, day);
+        datePickerDialog.show();
+    }
+    private boolean validateInput() {
+        String firstName = firstNameEditText.getText().toString().trim();
+        String lastName = lastNameEditText.getText().toString().trim();
+        String dob = dobEditText.getText().toString().trim();
+        String address = addressEditText.getText().toString().trim();
+        String email = emailEditText.getText().toString().trim();
+        if (firstName.isEmpty() || lastName.isEmpty() || dob.isEmpty() || address.isEmpty() || email.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    <TextView
+        android:id="@+id/textViewFirstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/textViewMiddleName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewFirstName"/>
+    <TextView
+        android:id="@+id/textViewLastName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewMiddleName"/>
+    <TextView
+        android:id="@+id/textViewDOB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewLastName"/>
+    <TextView
+        android:id="@+id/textViewAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewDOB"/>
+    <TextView
+        android:id="@+id/textViewEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textViewAddress"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class SecondActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+        String firstName = getIntent().getStringExtra("firstName");
+        String middleName = getIntent().getStringExtra("middleName");
+        String lastName = getIntent().getStringExtra("lastName");
+        String dob = getIntent().getStringExtra("dob");
+        String address = getIntent().getStringExtra("address");
+        String email = getIntent().getStringExtra("email");
+        TextView firstNameTextView = findViewById(R.id.textViewFirstName);
+        TextView middleNameTextView = findViewById(R.id.textViewMiddleName);
+        TextView lastNameTextView = findViewById(R.id.textViewLastName);
+        TextView dobTextView = findViewById(R.id.textViewDOB);
+        TextView addressTextView = findViewById(R.id.textViewAddress);
+        TextView emailTextView = findViewById(R.id.textViewEmail);
+        firstNameTextView.setText("First Name: " + firstName);
+        middleNameTextView.setText("Middle Name: " + middleName);
+        lastNameTextView.setText("Last Name: " + lastName);
+        dobTextView.setText("Date of Birth: " + dob);
+        addressTextView.setText("Address: " + address);
+        emailTextView.setText("Email: " + email);
+    }
+}
+
+
+
+package com.app.myapplication;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private EditText enoEditText, enameEditText, designationEditText, salaryEditText;
+    private Button insertButton, displayButton, clearButton;
+    private TextView employeeDetailsTextView;
+    private DBHelper dbHelper;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        enoEditText = findViewById(R.id.editTextEno);
+        enameEditText = findViewById(R.id.editTextEname);
+        designationEditText = findViewById(R.id.editTextDesignation);
+        salaryEditText = findViewById(R.id.editTextSalary);
+        insertButton = findViewById(R.id.buttonInsert);
+        displayButton = findViewById(R.id.buttonDisplay);
+        clearButton = findViewById(R.id.buttonClear);
+        employeeDetailsTextView = findViewById(R.id.textViewEmployeeDetails);
+        dbHelper = new DBHelper(this);
+        insertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertEmployee();
+            }
+        });
+        displayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayEmployeeDetails();
+            }
+        });
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearDatabase();
+            }
+        });
+    }
+    private void insertEmployee() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        int eno = Integer.parseInt(enoEditText.getText().toString());
+        String ename = enameEditText.getText().toString();
+        String designation = designationEditText.getText().toString();
+        double salary = Double.parseDouble(salaryEditText.getText().toString());
+        values.put(DBHelper.COLUMN_ENO, eno);
+        values.put(DBHelper.COLUMN_ENAME, ename);
+        values.put(DBHelper.COLUMN_DESIGNATION, designation);
+        values.put(DBHelper.COLUMN_SALARY, salary);
+        long newRowId = db.insert(DBHelper.TABLE_EMPLOYEE, null, values);
+        if (newRowId != -1) {
+            Toast.makeText(this, "Employee added successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error adding employee", Toast.LENGTH_SHORT).show();
+        }
+        db.close();
+    }
+    private void displayEmployeeDetails() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + DBHelper.TABLE_EMPLOYEE, null);
+        StringBuilder stringBuilder = new StringBuilder();
+        while (cursor.moveToNext()) {
+            int eno = cursor.getInt(cursor.getColumnIndex(DBHelper.COLUMN_ENO));
+            String ename = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_ENAME));
+            String designation = cursor.getString(cursor.getColumnIndex(DBHelper.COLUMN_DESIGNATION));
+            double salary = cursor.getDouble(cursor.getColumnIndex(DBHelper.COLUMN_SALARY));
+
+            stringBuilder.append("Eno: ").append(eno).append(", ")
+                    .append("Name: ").append(ename).append(", ")
+                    .append("Designation: ").append(designation).append(", ")
+                    .append("Salary: ").append(salary).append("\n\n");
+        }
+        cursor.close();
+        db.close();
+        employeeDetailsTextView.setText(stringBuilder.toString());
+    }
+    private void clearDatabase() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete(DBHelper.TABLE_EMPLOYEE, null, null);
+        db.close();
+        employeeDetailsTextView.setText("");
+        Toast.makeText(this, "Database cleared successfully", Toast.LENGTH_SHORT).show();
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+    <EditText
+        android:id="@+id/editTextEno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Employee Number"
+        android:inputType="number" />
+    <EditText
+        android:id="@+id/editTextEname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextEno"
+        android:hint="Employee Name" />
+    <EditText
+        android:id="@+id/editTextDesignation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextEname"
+        android:hint="Designation" />
+    <EditText
+        android:id="@+id/editTextSalary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextDesignation"
+        android:hint="Salary"
+        android:inputType="numberDecimal" />
+    <Button
+        android:id="@+id/buttonInsert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTextSalary"
+        android:text="Insert" />
+    <Button
+        android:id="@+id/buttonDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonInsert"
+        android:text="Display" />
+    <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonDisplay"
+        android:text="Clear Database" />
+    <TextView
+        android:id="@+id/textViewEmployeeDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonClear"
+        android:layout_marginTop="16dp" />
+</RelativeLayout>
+package com.app.myapplication;
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+public class DBHelper extends SQLiteOpenHelper {
+    private static final String DATABASE_NAME = "EmployeeDB";
+    private static final int DATABASE_VERSION = 1;
+    public static final String TABLE_EMPLOYEE = "Employee";
+    public static final String COLUMN_ENO = "Eno";
+    public static final String COLUMN_ENAME = "Ename";
+    public static final String COLUMN_DESIGNATION = "Designation";
+    public static final String COLUMN_SALARY = "Salary";
+    private static final String CREATE_TABLE_EMPLOYEE = "CREATE TABLE " + TABLE_EMPLOYEE + " (" +
+            COLUMN_ENO + " INTEGER PRIMARY KEY," +
+            COLUMN_ENAME + " TEXT," +
+            COLUMN_DESIGNATION + " TEXT," +
+            COLUMN_SALARY + " REAL)";
+    public DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(CREATE_TABLE_EMPLOYEE);
+    }
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_EMPLOYEE);
+        onCreate(db);
+    }
+}

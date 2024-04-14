@@ -1,0 +1,254 @@
+import java.applet.Applet;
+import java.awt.*;
+public class ScrollingText extends Applet implements Runnable {
+    private String text = "Hello, World! This is a scrolling text.";
+    private int xPos = 0;
+    @Override
+    public void init() {
+        new Thread(this).start();
+    }
+    @Override
+    public void run() {
+        while (true) {
+            for (int i = 0; i < getWidth() + text.length(); i++) {
+                xPos = i;
+                repaint();
+                sleep(10);
+            }
+            for (int i = getWidth(); i > -text.length(); i--) {
+                xPos = i;
+                repaint();
+                sleep(10);
+            }
+        }
+    }
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ignored) {}
+    }
+    @Override
+    public void paint(Graphics g) {
+        g.drawString(text, xPos, getHeight() / 2);
+    }
+}
+
+
+MyClient.java
+import java.awt.event.*;
+import java.awt.*;
+import java.net.*;
+import java.io.*;
+class MyClient extends Frame implements ActionListener {
+    static TextField t1 = new TextField(20);
+    static Button b1 = new Button("Send");
+    static TextArea ta = new TextArea(5, 20);
+    static DataOutputStream dos;
+    static DataInputStream dis;
+    static Socket s;
+    static String r;
+    MyClient() {
+        setLayout(new FlowLayout());
+        add(t1);
+        add(b1);
+        add(ta);
+        b1.addActionListener(this);
+        setVisible(true);
+        setSize(300, 300);
+
+    }
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == b1) {
+            try {
+                r = t1.getText();
+                dos.writeUTF(r);
+            } catch (Exception p) {
+            }
+        }
+    }
+    public static void main(String[] d) throws IOException {
+        MyClient x = new MyClient();
+        s = new Socket("localhost", 1281);
+        dos = new DataOutputStream(s.getOutputStream());
+        dis = new DataInputStream(s.getInputStream());
+        while (true) {
+            try {
+                r = dis.readUTF();
+                ta.append("Server:" + r + "\n");
+            } catch (EOFException e) {
+                System.out.println("Server terminated the connection");
+                break;
+            }
+        }
+        s.close();
+    }
+}
+
+MyServer.java
+import java.awt.event.*;
+import java.awt.*;
+import java.net.*;
+import java.io.*;
+class MyServer extends Frame implements ActionListener {
+    static TextField t1 = new TextField(20);
+    static Button b1 = new Button("Send");
+    static TextArea ta = new TextArea(5, 20);
+    static DataOutputStream dos;
+    static DataInputStream dis;
+    static ServerSocket st;
+    static Socket s;
+    static String r;
+    MyServer() {
+        setLayout(new FlowLayout());
+        add(t1);
+        add(b1);
+        add(ta);
+        b1.addActionListener(this);        
+        setVisible(true);
+        setSize(300, 300);
+    }
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        if (cmd.equalsIgnoreCase("send")) {
+            try {
+                r = t1.getText();
+                dos.writeUTF(r);
+            } catch (Exception p) {
+            }
+        }
+    }
+    public static void main(String[] d) throws IOException {
+        new MyServer();
+        st = new ServerSocket(1281);    
+        s = st.accept();
+        dos = new DataOutputStream(s.getOutputStream());
+        dis = new DataInputStream(s.getInputStream());
+        while (true) {
+            r = dis.readUTF();
+            ta.append("client:" + r + "\n");
+        }
+    }    
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="sendMessage"
+        android:text="Send Message" />
+</LinearLayout>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp" />
+</LinearLayout>
+package com.APP.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.content.Intent;
+import android.view.View;
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+    public void sendMessage(View view) {
+        Intent intent = new Intent(this, SecondActivity.class);
+        intent.putExtra("message", "Hello");
+        startActivity(intent);
+    }
+}
+package com.APP.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.widget.TextView;
+public class SecondActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_second);
+        TextView tvMessage = findViewById(R.id.tvMessage);
+        String message = getIntent().getStringExtra("message");
+        tvMessage.setText(message);
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Progress Dialog" />
+</LinearLayout>
+package com.app.myapplication;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    Button button;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        button = findViewById(R.id.button);
+        button.setOnClickListener(view -> new MyTask().execute());
+    }
+    class MyTask extends AsyncTask<Void, Integer, Void> {
+        ProgressDialog dialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(MainActivity.this);
+            dialog.setMessage("Loading...");
+            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            dialog.show();
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                for (int i = 0; i <= 100; i += 10) {
+                    Thread.sleep(300);
+                    publishProgress(i);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            dialog.setProgress(values[0]);
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            dialog.dismiss();
+        }
+    }
+}

@@ -1,0 +1,234 @@
+import java.sql.*;
+public class CollegeNamesDisplay {
+    public static void main(String[] args) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+            conn = DriverManager.getConnection("jdbc:odbc:CollegeDB");
+            stmt = conn.createStatement();
+            String sql = "SELECT CName FROM College";
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("List of College Names:");
+            while (rs.next()) {
+                String collegeName = rs.getString("CName");
+                System.out.println(collegeName);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+            } catch (SQLException se2) {
+            }
+            try {
+                if (conn != null) conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+    }
+}
+
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+public class HobbyServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html");
+        String selectedHobby = request.getParameter("hobby");
+        Cookie[] cookies = request.getCookies();
+        boolean hobbyExists = false;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("selectedHobby")) {
+                    hobbyExists = true;
+                    break;
+                }
+            }
+        }
+        if (!hobbyExists && selectedHobby != null) {
+            Cookie hobbyCookie = new Cookie("selectedHobby", selectedHobby);
+            response.addCookie(hobbyCookie);
+        }
+        response.getWriter().println("<html><head><title>Hobby Selection</title></head><body>");
+        response.getWriter().println("<form action='HobbyServlet' method='get'>");
+        response.getWriter().println("<h3>Select a Hobby:</h3>");
+        response.getWriter().println("<input type='radio' name='hobby' value='Painting'> Painting<br>");
+        response.getWriter().println("<input type='radio' name='hobby' value='Drawing'> Drawing<br>");
+        response.getWriter().println("<input type='radio' name='hobby' value='Singing'> Singing<br>");
+        response.getWriter().println("<input type='radio' name='hobby' value='Swimming'> Swimming<br><br>");
+        response.getWriter().println("<input type='submit' value='Submit'>");
+        response.getWriter().println("<input type='reset' value='Reset'>");
+        response.getWriter().println("</form></body></html>");
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/etNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter a number"
+        android:inputType="number"
+        android:layout_margin="16dp"/>
+    <Button
+        android:id="@+id/btnGenerateTable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generate Table"
+        android:layout_below="@id/etNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnGenerateTable"
+        android:layout_marginTop="16dp">
+        <TableLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ScrollView>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private EditText etNumber;
+    private Button btnGenerateTable;
+    private TableLayout tableLayout;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        etNumber = findViewById(R.id.etNumber);
+        btnGenerateTable = findViewById(R.id.btnGenerateTable);
+        tableLayout = findViewById(R.id.tableLayout);
+        btnGenerateTable.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateMultiplicationTable();
+            }
+        });
+    }
+    private void generateMultiplicationTable() {
+        tableLayout.removeAllViews();
+        String numberStr = etNumber.getText().toString().trim();
+        if (numberStr.isEmpty()) {
+            etNumber.setError("Please enter a number");
+            return;
+        }
+        int number = Integer.parseInt(numberStr);
+        for (int i = 1; i <= 10; i++) {
+            TableRow row = new TableRow(this);
+            TextView tvNumber = new TextView(this);
+            tvNumber.setText(String.valueOf(number));
+            tvNumber.setPadding(16, 8, 16, 8);
+            row.addView(tvNumber);
+            TextView tvMultiplier = new TextView(this);
+            tvMultiplier.setText(" x " + i + " = ");
+            tvMultiplier.setPadding(16, 8, 16, 8);
+            row.addView(tvMultiplier);
+            TextView tvResult = new TextView(this);
+            tvResult.setText(String.valueOf(number * i));
+            tvResult.setPadding(16, 8, 16, 8);
+            row.addView(tvResult);
+            tableLayout.addView(row);
+        }
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <Spinner
+        android:id="@+id/spinnerLanguages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:entries="@array/programming_languages"/>
+    <TextView
+        android:id="@+id/tvSelectedLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected Language: "
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:layout_below="@id/spinnerLanguages"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private Spinner spinnerLanguages;
+    private TextView tvSelectedLanguage;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        spinnerLanguages = findViewById(R.id.spinnerLanguages);
+        tvSelectedLanguage = findViewById(R.id.tvSelectedLanguage);
+        String[] programmingLanguages = getResources().getStringArray(R.array.programming_languages);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, programmingLanguages);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerLanguages.setAdapter(adapter);
+        spinnerLanguages.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedLanguage = parent.getItemAtPosition(position).toString();
+                tvSelectedLanguage.setText("Selected Language: " + selectedLanguage);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+}
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/arrays.xml -->
+<resources>
+    <string-array name="programming_languages">
+        <item>DSA with Java</item>
+        <item>DSA with C++</item>
+        <item>DSA with Python</item>
+    </string-array>
+</resources>

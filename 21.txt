@@ -1,0 +1,309 @@
+public class ThreadInfoDemo extends Thread {
+    public static void main(String[] args) {
+        ThreadInfoDemo thread = new ThreadInfoDemo();
+        thread.setName("MyThread");
+        thread.setPriority(Thread.MAX_PRIORITY);
+        thread.start();
+        String threadName = thread.getName();
+        int threadPriority = thread.getPriority();
+        System.out.println("Thread Name: " + threadName);
+        System.out.println("Thread Priority: " + threadPriority);
+    }
+    @Override
+    public void run() {
+        System.out.println("Thread is running...");
+    }
+}
+
+
+student-details.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Details</title>
+</head>
+<body>
+    <h2>Enter Student Details</h2>
+    <form action="http://localhost:8083/TYBBACA/StudentDetailsServlet" method="post">
+        Seat No: <input type="text" name="seatNo"><br><br>
+        Name: <input type="text" name="studName"><br><br>
+        Class: <input type="text" name="className"><br><br>
+        Total Marks: <input type="text" name="totalMarks"><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+
+StudentDetailsServlet.java
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+public class StudentDetailsServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        String seatNo = request.getParameter("seatNo");
+        String studName = request.getParameter("studName");
+        String className = request.getParameter("className");
+        String totalMarksStr = request.getParameter("totalMarks");
+        int totalMarks = Integer.parseInt(totalMarksStr);
+        double percentage = (totalMarks / 500.0) * 100;
+        String grade;
+        if (percentage >= 90) {
+            grade = "A+";
+        } else if (percentage >= 80) {
+            grade = "A";
+        } else if (percentage >= 70) {
+            grade = "B+";
+        } else if (percentage >= 60) {
+            grade = "B";
+        } else if (percentage >= 50) {
+            grade = "C";
+        } else {
+            grade = "F";
+        }
+        out.println("<html>");
+        out.println("<head><title>Student Details</title></head>");
+        out.println("<body>");
+        out.println("<h2>Student Details</h2>");
+        out.println("<p>Seat No: " + seatNo + "</p>");
+        out.println("<p>Name: " + studName + "</p>");
+        out.println("<p>Class: " + className + "</p>");
+        out.println("<p>Total Marks: " + totalMarks + "</p>");
+        out.println("<p>Percentage: " + percentage + "%</p>");
+        out.println("<p>Grade: " + grade + "</p>");
+        out.println("</body>");
+        out.println("</html>");
+        out.close();
+    }
+}
+
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <Button
+        android:id="@+id/pickDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pick a Date"
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:id="@+id/selectedDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pickDateButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text=""
+        android:textSize="20sp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import androidx.appcompat.app.AppCompatActivity;
+import android.app.DatePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TextView;
+import java.util.Calendar;
+public class MainActivity extends AppCompatActivity {
+    private TextView selectedDateTextView;
+    private Button pickDateButton;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        selectedDateTextView = findViewById(R.id.selectedDateTextView);
+        pickDateButton = findViewById(R.id.pickDateButton);
+        pickDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog();
+            }
+        });
+    }
+    private void showDatePickerDialog() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        selectedDateTextView.setText("Selected Date: " + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    }
+                },
+                year, month, dayOfMonth);
+        datePickerDialog.show();
+    }
+}
+
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <EditText
+        android:id="@+id/etGameName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game Name"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etGameType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Game Type"
+        android:layout_below="@id/etGameName"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <EditText
+        android:id="@+id/etNoOfPlayers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Number of Players"
+        android:layout_below="@id/etGameType"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"/>
+    <Button
+        android:id="@+id/btnAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Data"
+        android:layout_below="@id/etNoOfPlayers"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/btnUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Data"
+        android:layout_below="@id/btnAdd"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+    <Button
+        android:id="@+id/btnDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display Records"
+        android:layout_below="@id/btnUpdate"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"/>
+</RelativeLayout>
+package com.app.myapplication;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+public class MainActivity extends AppCompatActivity {
+    private SQLiteDatabase database;
+    private EditText etGameName, etGameType, etNoOfPlayers;
+    private Button btnAdd, btnUpdate, btnDisplay;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        database = openOrCreateDatabase("GameDatabase", MODE_PRIVATE, null);
+        createGameTable();
+        etGameName = findViewById(R.id.etGameName);
+        etGameType = findViewById(R.id.etGameType);
+        etNoOfPlayers = findViewById(R.id.etNoOfPlayers);
+        btnAdd = findViewById(R.id.btnAdd);
+        btnUpdate = findViewById(R.id.btnUpdate);
+        btnDisplay = findViewById(R.id.btnDisplay);
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addGameInfo();
+            }
+        });
+        btnUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateNoOfPlayers();
+            }
+        });
+        btnDisplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                displayRecords();
+            }
+        });
+    }
+    private void createGameTable() {
+        String createTableQuery = "CREATE TABLE IF NOT EXISTS Game (" +
+                "gno INTEGER PRIMARY KEY," +
+                "gname TEXT," +
+                "type TEXT," +
+                "no_of_players INTEGER" +
+                ")";
+        try {
+            database.execSQL(createTableQuery);
+            Toast.makeText(this, "Game table created successfully.", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error creating Game table.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void addGameInfo() {
+        String gameName = etGameName.getText().toString().trim();
+        String gameType = etGameType.getText().toString().trim();
+        int noOfPlayers = Integer.parseInt(etNoOfPlayers.getText().toString().trim());
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("gname", gameName);
+        contentValues.put("type", gameType);
+        contentValues.put("no_of_players", noOfPlayers);
+        long result = database.insert("Game", null, contentValues);
+        if (result != -1) {
+            Toast.makeText(this, "Game information added successfully.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error adding game information.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void updateNoOfPlayers() {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("no_of_players", 4);
+        int rowsAffected = database.update("Game", contentValues, "gname=?", new String[]{"Badminton"});
+        if (rowsAffected > 0) {
+            Toast.makeText(this, "Number of players updated successfully.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Failed to update number of players.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void displayRecords() {
+        Cursor cursor = database.rawQuery("SELECT * FROM Game", null);
+        if (cursor.moveToFirst()) {
+            do {
+                int gno = cursor.getInt(cursor.getColumnIndex("gno"));
+                String gname = cursor.getString(cursor.getColumnIndex("gname"));
+                String type = cursor.getString(cursor.getColumnIndex("type"));
+                int no_of_players = cursor.getInt(cursor.getColumnIndex("no_of_players"));
+                String record = "GNO: " + gno + ", GName: " + gname + ", Type: " + type + ", Players: " + no_of_players;
+                Toast.makeText(this, record, Toast.LENGTH_SHORT).show();
+            } while (cursor.moveToNext());
+        } else {
+            Toast.makeText(this, "No records found.", Toast.LENGTH_SHORT).show();
+        }
+        cursor.close();
+    }
+}
